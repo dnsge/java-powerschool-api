@@ -1,4 +1,7 @@
-package org.dnsge.powerschoolapi;
+package org.dnsge.powerschoolapi.client;
+
+import org.dnsge.powerschoolapi.user.User;
+import org.dnsge.powerschoolapi.user.UserConfig;
 
 import java.util.HashMap;
 
@@ -10,7 +13,7 @@ public class ClientStorage {
     }
 
     void register(UserConfig userConfig) {
-        storage.put(userConfig.username, userConfig);
+        storage.put(userConfig.getUsername(), userConfig);
     }
 
     UserConfig get(String username) {
@@ -18,6 +21,6 @@ public class ClientStorage {
     }
 
     UserConfig get(User user) {
-        return storage.getOrDefault(user.username, null);
+        return storage.getOrDefault(user.getUsername(), null);
     }
 }

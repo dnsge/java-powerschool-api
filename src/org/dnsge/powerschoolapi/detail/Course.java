@@ -1,5 +1,6 @@
-package org.dnsge.powerschoolapi;
+package org.dnsge.powerschoolapi.detail;
 
+import org.dnsge.powerschoolapi.user.User;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.jsoup.Connection;
@@ -111,7 +112,7 @@ public class Course {
         JSONObject postData = gradeGroup.getJsonPostForAssignments();
 
         try {
-            Connection.Response assignmentResponse = Jsoup.connect(user.config.client.urlify("ws/xte/assignment/lookup"))
+            Connection.Response assignmentResponse = Jsoup.connect(user.getClient().urlify("ws/xte/assignment/lookup"))
                     .timeout(2000)
                     .method(Connection.Method.POST)
                     .header("Content-Type", "application/json")

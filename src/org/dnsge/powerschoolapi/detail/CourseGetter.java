@@ -1,4 +1,4 @@
-package org.dnsge.powerschoolapi;
+package org.dnsge.powerschoolapi.detail;
 
 import java.util.ArrayList;
 

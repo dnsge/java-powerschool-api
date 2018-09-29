@@ -1,5 +1,10 @@
-package org.dnsge.powerschoolapi;
+package org.dnsge.powerschoolapi.client;
 
+import org.dnsge.powerschoolapi.PowerschoolAuth;
+import org.dnsge.powerschoolapi.detail.Course;
+import org.dnsge.powerschoolapi.detail.CourseGetter;
+import org.dnsge.powerschoolapi.user.User;
+import org.dnsge.powerschoolapi.user.UserConfig;
 import org.jsoup.Connection.Method;
 import org.jsoup.Connection.Response;
 import org.jsoup.Jsoup;
@@ -12,7 +17,7 @@ import java.util.Scanner;
 public class PowerschoolClient {
 
     private String psInstallURL;
-    private final ClientStorage storage;
+    private final org.dnsge.powerschoolapi.client.ClientStorage storage;
 
     public PowerschoolClient(String psInstallURL) {
             this.psInstallURL = fixUrl(psInstallURL);
@@ -33,7 +38,7 @@ public class PowerschoolClient {
         return returnString;
     }
 
-    String urlify(String extension) {
+    public String urlify(String extension) {
         // URL based off of the base install url
         return psInstallURL + (extension.charAt(0) == '/' ? extension.substring(1) : extension);
     }
@@ -116,7 +121,7 @@ public class PowerschoolClient {
         User me = client.authenticate(username, password);
 
         CourseGetter g = me.newCourseGetter();
-        Course found = g.limitByName("AP Computer Science A")
+        Course found = g.limitByName("Lifelong Fitness 10")
                         .first();
 
         System.out.println(found);

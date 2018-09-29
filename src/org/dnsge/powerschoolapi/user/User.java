@@ -1,5 +1,8 @@
-package org.dnsge.powerschoolapi;
+package org.dnsge.powerschoolapi.user;
 
+import org.dnsge.powerschoolapi.client.PowerschoolClient;
+import org.dnsge.powerschoolapi.detail.Course;
+import org.dnsge.powerschoolapi.detail.CourseGetter;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.nodes.Node;
@@ -45,8 +48,19 @@ public class User {
         return config.client.getAs(this, url);
     }
 
-    CourseGetter newCourseGetter() {
+    public CourseGetter newCourseGetter() {
         return new CourseGetter(courses);
     }
 
+    public String getUsername() {
+        return username;
+    }
+
+    public UserConfig getConfig() {
+        return config;
+    }
+
+    public PowerschoolClient getClient() {
+        return config.client;
+    }
 }

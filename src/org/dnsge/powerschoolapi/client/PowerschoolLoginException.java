@@ -1,4 +1,4 @@
-package org.dnsge.powerschoolapi;
+package org.dnsge.powerschoolapi.client;
 
 public class PowerschoolLoginException extends RuntimeException {
 
