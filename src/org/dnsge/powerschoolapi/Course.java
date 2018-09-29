@@ -92,7 +92,7 @@ public class Course {
         return returnCourse;
     }
 
-    public GradeGroup getGradeGroup(GradeGroup.GradingPeriod gradingPeriod) {
+    public GradeGroup getGradeGroup(GradingPeriod gradingPeriod) {
         for (GradeGroup gg : courseGrades) {
             if (gg.gradingPeriod == gradingPeriod)
                 return gg;
@@ -100,7 +100,7 @@ public class Course {
         return null;
     }
 
-    public ArrayList<Assignment> getAssignments(GradeGroup.GradingPeriod gradingPeriod) {
+    public ArrayList<Assignment> getAssignments(GradingPeriod gradingPeriod) {
         GradeGroup gradeGroup = getGradeGroup(gradingPeriod);
 
         if (gradeGroup == null || gradeGroup.isEmpty()) {

@@ -146,7 +146,7 @@ public class PowerschoolClient {
 
         Course cl = me.courseList.get(3);
         System.out.println(cl.courseName);
-        System.out.println(cl.getAssignments(GradeGroup.GradingPeriod.F1));
+        System.out.println(cl.getAssignments(GradingPeriod.E1));
     }
 
 }
