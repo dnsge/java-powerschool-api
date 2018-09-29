@@ -1,6 +1,6 @@
 package org.dnsge.powerschoolapi.detail;
 
-enum GradingPeriod {
+public enum GradingPeriod {
     Q1,
     Q2,
     E1,
