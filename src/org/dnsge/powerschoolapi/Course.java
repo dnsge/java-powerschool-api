@@ -22,10 +22,10 @@ public class Course {
     String teacherFirstName;
     String teacherLastName;
     final User user;
-    final ArrayList<GradingPeriod> courseGrades;
+    final ArrayList<GradeGroup> courseGrades;
 
     public Course(String courseName, String courseFrequency, String teacherFirstName, String teacherLastName,
-                  ArrayList<GradingPeriod> courseGrades, User user) {
+                  ArrayList<GradeGroup> courseGrades, User user) {
         this.courseName = courseName;
         this.courseFrequency = courseFrequency;
         this.teacherFirstName = teacherFirstName;
@@ -34,7 +34,7 @@ public class Course {
         this.user = user;
     }
 
-    public Course(ArrayList<GradingPeriod> courseGrades, User user) {
+    public Course(ArrayList<GradeGroup> courseGrades, User user) {
         this.courseGrades = courseGrades;
         this.user = user;
     }
@@ -44,7 +44,7 @@ public class Course {
         String courseName = "";
         String teacherFirstName = "";
         String teacherLastName = "";
-        ArrayList<GradingPeriod> courseGrades = new ArrayList<>();
+        ArrayList<GradeGroup> courseGrades = new ArrayList<>();
 
         Course returnCourse = new Course(courseGrades, user);
 
@@ -65,9 +65,9 @@ public class Course {
                     if (!gradeElementATag.childNode(0).toString().equals("[ i ]")) {
                         String letterGrade = gradeElementATag.childNode(0).toString();
                         float numberGrade = Float.parseFloat(gradeElementATag.childNode(2).toString());
-                        courseGrades.add(new GradingPeriod(returnCourse, letterGrade, numberGrade, gradePeriodCounter, gradeElementATag.attr("href")));
+                        courseGrades.add(new GradeGroup(returnCourse, letterGrade, numberGrade, gradePeriodCounter, gradeElementATag.attr("href")));
                     } else {
-                        courseGrades.add(GradingPeriod.emptyGrade(returnCourse, gradePeriodCounter));
+                        courseGrades.add(GradeGroup.emptyGrade(returnCourse, gradePeriodCounter));
                     }
                     gradePeriodCounter++;
                 }
@@ -81,12 +81,21 @@ public class Course {
         return returnCourse;
     }
 
-    public ArrayList<Assignment> getAssignments(GradingPeriod gradingPeriod) {
-        if (gradingPeriod.isEmpty()) {
+    public GradeGroup getGradeGroup(GradeGroup.GradingPeriod gradingPeriod) {
+        for (GradeGroup gg : courseGrades) {
+            if (gg.gradingPeriod == gradingPeriod)
+                return gg;
+        }
+        return null;
+    }
+
+    public ArrayList<Assignment> getAssignments(GradeGroup.GradingPeriod gradingPeriod) {
+        GradeGroup gradeGroup = getGradeGroup(gradingPeriod);
+        if (gradeGroup == null || gradeGroup.isEmpty()) {
             return new ArrayList<>();
         }
 
-        JSONObject postData = gradingPeriod.getJsonPostForAssignments();
+        JSONObject postData = gradeGroup.getJsonPostForAssignments();
 
         try {
             Connection.Response assignmentResponse = Jsoup.connect(user.client.urlify("ws/xte/assignment/lookup"))
@@ -100,10 +109,10 @@ public class Course {
 
             ArrayList<Assignment> rList = new ArrayList<>();
 
-            (new JSONArray(assignmentResponse.body())).forEach(jsonObject -> {
-                JSONObject jo = (JSONObject)jsonObject;
-                rList.add(Assignment.generateFromJsonObject(jo));
-            });
+            (new JSONArray(assignmentResponse.body())).forEach(
+                    jsonObject -> rList.add(Assignment.generateFromJsonObject((JSONObject)jsonObject))
+            );
+
             return rList;
 
 

@@ -7,12 +7,39 @@ import org.jsoup.nodes.Element;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class GradingPeriod {
+
+public class GradeGroup {
+
+    enum GradingPeriod {
+        Q1,
+        Q2,
+        E1,
+        F1,
+        Q3,
+        Q4,
+        E2,
+        Unknown;
+
+        public static GradingPeriod fromNumber(int numb) {
+            try {
+                return GradingPeriod.values()[numb];
+            } catch (ArrayIndexOutOfBoundsException e) {
+                return GradingPeriod.Unknown;
+            }
+        }
+
+        @Override
+        public String toString() {
+            if (this == Unknown)
+                return "??";
+            return super.toString();
+        }
+    }
 
     final Course myCourse;
     final String letterGrade;
     final float numberGrade;
-    final int gradingPeriod;
+    final GradingPeriod gradingPeriod;
     final String gradingPeriodName;
     final String hrefAttrib;
     private boolean isEmpty;
@@ -20,39 +47,16 @@ public class GradingPeriod {
     private static final Pattern urlMatcherPattern =
             Pattern.compile("guardian/scores\\.html\\?frn=(\\d+)&begdate=(\\d{2})/(\\d{2})/(\\d{4})&enddate=(\\d{2})/(\\d{2})/(\\d{4})&fg=([^&]+)&schoolid=(\\d+)", Pattern.CASE_INSENSITIVE | Pattern.MULTILINE);
 
-    public GradingPeriod(Course myCourse, String letterGrade, float numberGrade, int gradingPeriod, String hrefAttrib) {
+    public GradeGroup(Course myCourse, String letterGrade, float numberGrade, int gradingPeriod, String hrefAttrib) {
+
         this.myCourse = myCourse;
         this.letterGrade = letterGrade;
         this.numberGrade = numberGrade;
         this.hrefAttrib = "guardian/" + hrefAttrib;
 
-        this.gradingPeriod = gradingPeriod;
-        switch (gradingPeriod) {
-            case 0:
-                gradingPeriodName = "Q1";
-                break;
-            case 1:
-                gradingPeriodName = "Q2";
-                break;
-            case 2:
-                gradingPeriodName = "E1";
-                break;
-            case 3:
-                gradingPeriodName = "F1";
-                break;
-            case 4:
-                gradingPeriodName = "Q3";
-                break;
-            case 5:
-                gradingPeriodName = "Q4";
-                break;
-            case 6:
-                gradingPeriodName = "E2";
-                break;
-            default:
-                gradingPeriodName = "??";
-                break;
-        }
+        this.gradingPeriod = GradingPeriod.fromNumber(gradingPeriod);
+        this.gradingPeriodName = this.gradingPeriod.toString();
+
     }
 
     JSONObject getJsonPostForAssignments() {
@@ -92,8 +96,8 @@ public class GradingPeriod {
 
     }
 
-    public static GradingPeriod emptyGrade(Course myCourse, int gradingPeriod) {
-        GradingPeriod temp = new GradingPeriod(myCourse, "", 0f, gradingPeriod, null);
+    public static GradeGroup emptyGrade(Course myCourse, int gradingPeriod) {
+        GradeGroup temp = new GradeGroup(myCourse, "", 0f, gradingPeriod, null);
         temp.setEmpty(true);
         return temp;
     }
