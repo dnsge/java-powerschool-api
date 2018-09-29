@@ -5,23 +5,22 @@ import org.jsoup.nodes.Element;
 import org.jsoup.nodes.Node;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Map;
 
 public class User {
 
     final ArrayList<Course> courseList;
-    final PowerschoolClient client;
-    final Document constructionDoc;
-    final String username;
-    final String password;
     final String personName;
+    final UserConfig config;
+    final String username;
 
-    public User(PowerschoolClient client, String username, Document doc) {
-        this.client = client;
-        this.constructionDoc = doc;
-        this.username = username;
-        this.password = (String)client.getUserData(username).get("password");
+    public User(UserConfig config) {
+        this.config = config;
+        this.username = config.username;
+        config.setUser(this);
         this.courseList = new ArrayList<>();
+
+        Document doc = this.config.constructionDocument;
 
         Node usernameContainer = doc.getElementById("userName").child(0).childNode(0);
         personName = usernameContainer.toString().trim();
@@ -37,14 +36,14 @@ public class User {
         }
     }
 
-    public HashMap<String, String> getAuth() {
+    public Map<String, String> getAuth() {
         // Get the auth data for this user
-        return client.getUserAuth(this);
+        return config.authData;
     }
 
     public Document getAsSelf(String url) {
         // GET request as this user with its auth
-        return client.getAs(this, url);
+        return config.client.getAs(this, url);
     }
 
 }

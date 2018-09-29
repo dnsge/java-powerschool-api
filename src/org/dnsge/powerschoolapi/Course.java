@@ -111,7 +111,7 @@ public class Course {
         JSONObject postData = gradeGroup.getJsonPostForAssignments();
 
         try {
-            Connection.Response assignmentResponse = Jsoup.connect(user.client.urlify("ws/xte/assignment/lookup"))
+            Connection.Response assignmentResponse = Jsoup.connect(user.config.client.urlify("ws/xte/assignment/lookup"))
                     .timeout(2000)
                     .method(Connection.Method.POST)
                     .header("Content-Type", "application/json")

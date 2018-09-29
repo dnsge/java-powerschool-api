@@ -6,18 +6,17 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
 
 public class PowerschoolClient {
 
     private String psInstallURL;
-    private HashMap<String, HashMap<String, Object>> dataStorage;
+    private final ClientStorage storage;
 
     public PowerschoolClient(String psInstallURL) {
             this.psInstallURL = fixUrl(psInstallURL);
-            this.dataStorage = new HashMap<>();
+            this.storage = new ClientStorage();
     }
 
     private String fixUrl(String initialURL) {
@@ -73,24 +72,15 @@ public class PowerschoolClient {
 
             Map<String, String> mapCookies = loginPostResp.cookies();
 
-            // Data storage (Will replace with better, custom object)
-            if (dataStorage.containsKey(username)) {
-                dataStorage.get(username).put("auth", mapCookies);
-                dataStorage.get(username).put("password", password);
-            } else {
-                HashMap<String, Object> userData = new HashMap<>();
-                userData.put("auth", mapCookies);
-                userData.put("password", password);
-                dataStorage.put(username, userData);
-            }
-
             // Get homepage info
             Document gradesPage = Jsoup.connect(urlify("guardian/home.html"))
                     .timeout(2000)
                     .cookies(mapCookies)
                     .get();
 
-            return new User(this, username, gradesPage);
+            UserConfig config = new UserConfig(this, username, password, gradesPage, mapCookies);
+            storage.register(config);
+            return new User(config);
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -103,7 +93,7 @@ public class PowerschoolClient {
         // Get a url as a user
         try {
             return Jsoup.connect(urlify(getUrl))
-                    .cookies((Map<String, String>)getUserData(user.username).get("auth"))
+                    .cookies(user.getAuth())
                     .get();
         } catch (IOException e) {
             e.printStackTrace();
@@ -114,25 +104,6 @@ public class PowerschoolClient {
     public String getPsInstallURL() {
         return psInstallURL;
     }
-
-    public HashMap<String, Object> getUserData(String username) {
-        return dataStorage.getOrDefault(username, null);
-    }
-
-    public HashMap<String, Object> getUserData(User user) {
-        return dataStorage.getOrDefault(user.username, null);
-    }
-
-    @SuppressWarnings("unchecked")
-    public HashMap<String, String> getUserAuth(User user) {
-        return (HashMap<String, String>)dataStorage.getOrDefault(user.username, null).get("auth");
-    }
-
-    @SuppressWarnings("unchecked")
-    public HashMap<String, String> getUserAuth(String username) {
-        return (HashMap<String, String>)dataStorage.getOrDefault(username, null).get("auth");
-    }
-    // Todo: Special config object for storing information!
 
     public static void main(String[] args) {
         PowerschoolClient client = new PowerschoolClient("https://ps.ucfsd.org");
@@ -146,7 +117,7 @@ public class PowerschoolClient {
 
         Course cl = me.courseList.get(3);
         System.out.println(cl.courseName);
-        System.out.println(cl.getAssignments(GradingPeriod.E1));
+        System.out.println(cl.getAssignments(GradingPeriod.F1));
     }
 
 }
