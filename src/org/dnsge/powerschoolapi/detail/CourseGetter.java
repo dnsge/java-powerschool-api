@@ -10,7 +10,6 @@ public class CourseGetter {
         this.currentCourses = (ArrayList<Course>)courses.clone();
     }
 
-    @SuppressWarnings("unchecked")
     public CourseGetter limitByName(String name) {
         ArrayList<Course> newLimited = new ArrayList<>();
 
@@ -18,12 +17,21 @@ public class CourseGetter {
             if (c.courseName.equals(name))
                 newLimited.add(c);
 
+        currentCourses = newLimited;
+        return this;
+    }
+
+    public CourseGetter containsByName(String name) {
+        ArrayList<Course> newLimited = new ArrayList<>();
+
+        for (Course c : currentCourses)
+            if (c.courseName.contains(name))
+                newLimited.add(c);
 
         currentCourses = newLimited;
         return this;
     }
 
-    @SuppressWarnings("unchecked")
     public CourseGetter limitByFrequency(String courseFrequency) {
         ArrayList<Course> newLimited = new ArrayList<>();
 
@@ -31,12 +39,21 @@ public class CourseGetter {
             if (c.courseFrequency.equals(courseFrequency))
                 newLimited.add(c);
 
+        currentCourses = newLimited;
+        return this;
+    }
+
+    public CourseGetter containsByFrequency(String courseFrequency) {
+        ArrayList<Course> newLimited = new ArrayList<>();
+
+        for (Course c : currentCourses)
+            if (c.courseFrequency.contains(courseFrequency))
+                newLimited.add(c);
 
         currentCourses = newLimited;
         return this;
     }
 
-    @SuppressWarnings("unchecked")
     public CourseGetter limitByTeacherLastName(String teacherLastName) {
         ArrayList<Course> newLimited = new ArrayList<>();
 
@@ -44,6 +61,16 @@ public class CourseGetter {
             if (c.teacherLastName.equals(teacherLastName))
                 newLimited.add(c);
 
+        currentCourses = newLimited;
+        return this;
+    }
+
+    public CourseGetter containsByTeacherLastName(String teacherLastName) {
+        ArrayList<Course> newLimited = new ArrayList<>();
+
+        for (Course c : currentCourses)
+            if (c.teacherLastName.contains(teacherLastName))
+                newLimited.add(c);
 
         currentCourses = newLimited;
         return this;
