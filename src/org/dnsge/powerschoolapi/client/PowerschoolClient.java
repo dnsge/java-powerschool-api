@@ -1,8 +1,6 @@
 package org.dnsge.powerschoolapi.client;
 
 import org.dnsge.powerschoolapi.PowerschoolAuth;
-import org.dnsge.powerschoolapi.detail.Course;
-import org.dnsge.powerschoolapi.detail.CourseGetter;
 import org.dnsge.powerschoolapi.user.User;
 import org.dnsge.powerschoolapi.user.UserConfig;
 import org.jsoup.Connection.Method;
@@ -12,12 +10,11 @@ import org.jsoup.nodes.Document;
 
 import java.io.IOException;
 import java.util.Map;
-import java.util.Scanner;
 
 public class PowerschoolClient {
 
     private String psInstallURL;
-    private final org.dnsge.powerschoolapi.client.ClientStorage storage;
+    private ClientStorage storage;
 
     public PowerschoolClient(String psInstallURL) {
             this.psInstallURL = fixUrl(psInstallURL);
@@ -93,7 +90,6 @@ public class PowerschoolClient {
         }
     }
 
-    @SuppressWarnings("unchecked")
     public Document getAs(User user, String getUrl) {
         // Get a url as a user
         try {
@@ -110,21 +106,8 @@ public class PowerschoolClient {
         return psInstallURL;
     }
 
-    public static void main(String[] args) {
-        PowerschoolClient client = new PowerschoolClient("https://ps.ucfsd.org");
-        Scanner inp = new Scanner(System.in);
-        System.out.print("Username: ");
-        String username = inp.nextLine();
-        System.out.print("Password: ");
-        String password = inp.nextLine();
-
-        User me = client.authenticate(username, password);
-
-        CourseGetter g = me.newCourseGetter();
-        Course found = g.limitByName("Lifelong Fitness 10")
-                        .first();
-
-        System.out.println(found);
+    @Override
+    public String toString() {
+        return "PowerschoolClient (" + psInstallURL + ")";
     }
-
 }
