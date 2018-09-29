@@ -9,7 +9,7 @@ import java.util.Map;
 
 public class User {
 
-    final ArrayList<Course> courseList;
+    final ArrayList<Course> courses;
     final String personName;
     final UserConfig config;
     final String username;
@@ -18,7 +18,7 @@ public class User {
         this.config = config;
         this.username = config.username;
         config.setUser(this);
-        this.courseList = new ArrayList<>();
+        this.courses = new ArrayList<>();
 
         Document doc = this.config.constructionDocument;
 
@@ -30,8 +30,7 @@ public class User {
         Element mainContentContainer = quickLookupDoc.child(0).child(0);
         for (Element child : mainContentContainer.children()) {
             if (child.hasAttr("id")) {
-                Course newPeriod = Course.generateCourseFromElement(child, this);
-                courseList.add(newPeriod);
+                courses.add(Course.generateCourseFromElement(child, this));
             }
         }
     }
@@ -44,6 +43,10 @@ public class User {
     public Document getAsSelf(String url) {
         // GET request as this user with its auth
         return config.client.getAs(this, url);
+    }
+
+    CourseGetter newCourseGetter() {
+        return new CourseGetter(courses);
     }
 
 }

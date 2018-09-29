@@ -115,9 +115,11 @@ public class PowerschoolClient {
 
         User me = client.authenticate(username, password);
 
-        Course cl = me.courseList.get(3);
-        System.out.println(cl.courseName);
-        System.out.println(cl.getAssignments(GradingPeriod.F1));
+        CourseGetter g = me.newCourseGetter();
+        Course found = g.limitByName("AP Computer Science A")
+                        .first();
+
+        System.out.println(found);
     }
 
 }
