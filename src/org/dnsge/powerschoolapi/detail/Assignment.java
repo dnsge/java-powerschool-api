@@ -4,6 +4,10 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 public class Assignment {
 
     public final String name;
@@ -12,27 +16,30 @@ public class Assignment {
     public final Integer scoredPoints;
     public final Float scorePercent;
     public final String scoreLetterGrade;
-    public final String dueDate;
-    public final String scoreEntryDate;
+    public final String dueDateString;
+    public final String scoreEntryDateString;
     public final Boolean isCollected;
     public final Boolean isLate;
     public final Boolean isMissing;
     public final Boolean isExempt;
     public final Boolean isAbsent;
     public final Boolean isIncomplete;
+    public final Date dueDate;
+    public final Date scoreEntryDate;
 
     public final boolean isMissingDetails;
 
     private Assignment(String name, Integer assignmentId, Integer totalPoints, Integer scoredPoints, Float scorePercent,
-                      String scoreLetterGrade, String[] dates, Boolean[] flags, boolean isMissingDetails) {
+                      String scoreLetterGrade, String[] dates, Boolean[] flags, boolean isMissingDetails) {Date dueDate1;
+        Date scoreEntryDate1;
         this.name = name;
         this.assignmentId = assignmentId;
         this.totalPoints = totalPoints;
         this.scoredPoints = scoredPoints;
         this.scorePercent = scorePercent;
         this.scoreLetterGrade = scoreLetterGrade;
-        this.dueDate = dates[0];
-        this.scoreEntryDate = dates[1];
+        this.dueDateString = dates[0];
+        this.scoreEntryDateString = dates[1];
         this.isCollected = flags[0];
         this.isLate = flags[1];
         this.isMissing = flags[2];
@@ -40,11 +47,33 @@ public class Assignment {
         this.isAbsent = flags[4];
         this.isIncomplete = flags[5];
         this.isMissingDetails = isMissingDetails;
+
+        if (dueDateString != null) {
+            try {
+                dueDate1 = new SimpleDateFormat("yyyy-MM-dd").parse(dueDateString);
+            } catch (ParseException e) {
+                dueDate1 = null;
+            }
+        } else {
+            dueDate1 = null;
+        }
+
+        dueDate = dueDate1;
+        if (scoreEntryDateString != null) {
+            try {
+                scoreEntryDate1 = new SimpleDateFormat("yyyy-MM-dd").parse(scoreEntryDateString);
+            } catch (ParseException e) {
+                scoreEntryDate1 = null;
+            }
+        } else {
+            scoreEntryDate1 = null;
+        }
+        scoreEntryDate = scoreEntryDate1;
     }
 
-    private Assignment(String name, Integer assignmentId, Integer totalPoints, String dueDate) {
+    private Assignment(String name, Integer assignmentId, Integer totalPoints, String dueDateString) {
         this(name, assignmentId, totalPoints, null, null, null,
-                new String[]{dueDate, null}, new Boolean[]{null, null, null, null, null, null}, true);
+                new String[]{dueDateString, null}, new Boolean[]{null, null, null, null, null, null}, true);
     }
 
     private static Integer getIntOrNull(JSONObject jo, String key) {
