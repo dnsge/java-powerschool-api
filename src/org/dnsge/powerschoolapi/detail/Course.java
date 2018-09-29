@@ -22,15 +22,19 @@ public class Course {
     String courseFrequency;
     String teacherFirstName;
     String teacherLastName;
+    String teacherEmail;
+    String room;
     final User user;
     final ArrayList<GradeGroup> courseGrades;
 
     public Course(String courseName, String courseFrequency, String teacherFirstName, String teacherLastName,
-                  ArrayList<GradeGroup> courseGrades, User user) {
+                  String teacherEmail, String room, ArrayList<GradeGroup> courseGrades, User user) {
         this.courseName = courseName;
         this.courseFrequency = courseFrequency;
         this.teacherFirstName = teacherFirstName;
         this.teacherLastName = teacherLastName;
+        this.teacherEmail = teacherEmail;
+        this.room = room;
         this.courseGrades = courseGrades;
         this.user = user;
     }
@@ -45,6 +49,8 @@ public class Course {
         String courseName = "";
         String teacherFirstName = "";
         String teacherLastName = "";
+        String teacherEmail = "";
+        String room = "";
 
         // Create the basic course with a reference to the ArrayList that will later be populated
         ArrayList<GradeGroup> courseGrades = new ArrayList<>();
@@ -57,6 +63,11 @@ public class Course {
             if (courseDetailElement.hasAttr("align")) {
                 courseName = courseDetailElement.childNode(0).toString().replace("&nbsp;", "");
                 String teacherDesc = courseDetailElement.childNode(2).attr("title");
+                teacherEmail = courseDetailElement.childNode(4).attr("href").substring(7);
+                try {
+                    room = courseDetailElement.childNode(5).toString().replace("&nbsp;", "").substring(5);
+                } catch (IndexOutOfBoundsException ignored){}
+
                 Matcher teacherMatcher = teacherNamePattern.matcher(teacherDesc);
                 teacherMatcher.matches();
                 teacherLastName = teacherMatcher.group(1);
@@ -89,6 +100,8 @@ public class Course {
         returnCourse.courseName = courseName;
         returnCourse.teacherFirstName = teacherFirstName;
         returnCourse.teacherLastName = teacherLastName;
+        returnCourse.teacherEmail = teacherEmail;
+        returnCourse.room = room;
 
         return returnCourse;
     }
@@ -143,5 +156,41 @@ public class Course {
     @Override
     public String toString() {
         return courseName + " - " + teacherLastName + " (" + courseGrades.toString() + ")";
+    }
+
+    public ArrayList<GradeGroup> getCourseGrades() {
+        return courseGrades;
+    }
+
+    public static Pattern getTeacherNamePattern() {
+        return teacherNamePattern;
+    }
+
+    public String getCourseFrequency() {
+        return courseFrequency;
+    }
+
+    public String getCourseName() {
+        return courseName;
+    }
+
+    public String getRoom() {
+        return room;
+    }
+
+    public String getTeacherEmail() {
+        return teacherEmail;
+    }
+
+    public String getTeacherFirstName() {
+        return teacherFirstName;
+    }
+
+    public String getTeacherLastName() {
+        return teacherLastName;
+    }
+
+    public User getUser() {
+        return user;
     }
 }
