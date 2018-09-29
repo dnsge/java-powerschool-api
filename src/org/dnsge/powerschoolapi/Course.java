@@ -44,13 +44,15 @@ public class Course {
         String courseName = "";
         String teacherFirstName = "";
         String teacherLastName = "";
-        ArrayList<GradeGroup> courseGrades = new ArrayList<>();
 
+        // Create the basic course with a reference to the ArrayList that will later be populated
+        ArrayList<GradeGroup> courseGrades = new ArrayList<>();
         Course returnCourse = new Course(courseGrades, user);
 
         int gradePeriodCounter = 0;
 
         for (Element courseDetailElement : genElement.children()) {
+            // If element has the align attribute, it contains the course information
             if (courseDetailElement.hasAttr("align")) {
                 courseName = courseDetailElement.childNode(0).toString().replace("&nbsp;", "");
                 String teacherDesc = courseDetailElement.childNode(2).attr("title");
@@ -59,20 +61,29 @@ public class Course {
                 teacherLastName = teacherMatcher.group(1);
                 teacherFirstName = teacherMatcher.group(2);
             }
+
+            // If the element has at least one child and that child is an <a> tag
             if (courseDetailElement.children().size() != 0) {
                 if (courseDetailElement.child(0).tagName().equals("a")) {
+
                     Element gradeElementATag = courseDetailElement.child(0);
+
                     if (!gradeElementATag.childNode(0).toString().equals("[ i ]")) {
+                        // Get the grade group information
                         String letterGrade = gradeElementATag.childNode(0).toString();
                         float numberGrade = Float.parseFloat(gradeElementATag.childNode(2).toString());
                         courseGrades.add(new GradeGroup(returnCourse, letterGrade, numberGrade, gradePeriodCounter, gradeElementATag.attr("href")));
                     } else {
+                        // No grades exist in this specific group
                         courseGrades.add(GradeGroup.emptyGrade(returnCourse, gradePeriodCounter));
                     }
                     gradePeriodCounter++;
+
                 }
             }
         }
+
+        // Update the course with the data found above
         returnCourse.courseFrequency = courseFrequency;
         returnCourse.courseName = courseName;
         returnCourse.teacherFirstName = teacherFirstName;
@@ -91,10 +102,12 @@ public class Course {
 
     public ArrayList<Assignment> getAssignments(GradeGroup.GradingPeriod gradingPeriod) {
         GradeGroup gradeGroup = getGradeGroup(gradingPeriod);
+
         if (gradeGroup == null || gradeGroup.isEmpty()) {
             return new ArrayList<>();
         }
 
+        // JSON post data with start, end dates and section ids
         JSONObject postData = gradeGroup.getJsonPostForAssignments();
 
         try {
@@ -108,7 +121,7 @@ public class Course {
                     .execute();
 
             ArrayList<Assignment> rList = new ArrayList<>();
-
+            // Populate the return list with new Assignments
             (new JSONArray(assignmentResponse.body())).forEach(
                     jsonObject -> rList.add(Assignment.generateFromJsonObject((JSONObject)jsonObject))
             );

@@ -26,6 +26,7 @@ public class User {
         Node usernameContainer = doc.getElementById("userName").child(0).childNode(0);
         personName = usernameContainer.toString().trim();
 
+        // Scan and find the content on user homepage, create courses from it
         Element quickLookupDoc = doc.getElementById("quickLookup");
         Element mainContentContainer = quickLookupDoc.child(0).child(0);
         for (Element child : mainContentContainer.children()) {
@@ -37,10 +38,12 @@ public class User {
     }
 
     public HashMap<String, String> getAuth() {
+        // Get the auth data for this user
         return client.getUserAuth(this);
     }
 
     public Document getAsSelf(String url) {
+        // GET request as this user with its auth
         return client.getAs(this, url);
     }
 

@@ -40,6 +40,7 @@ public class Assignment {
 
     static Assignment generateFromJsonObject(JSONObject jo) {
         try {
+            // Read the JSONObject and create a new Assignment object from it
             int assignmentId = jo.getInt("assignmentid");
 
             JSONObject assignmentSections = jo.getJSONArray("_assignmentsections").getJSONObject(0);

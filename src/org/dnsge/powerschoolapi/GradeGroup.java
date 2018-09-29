@@ -21,6 +21,7 @@ public class GradeGroup {
         Unknown;
 
         public static GradingPeriod fromNumber(int numb) {
+            // Get a GradingPeriod from the number that corresponds with it
             try {
                 return GradingPeriod.values()[numb];
             } catch (ArrayIndexOutOfBoundsException e) {
@@ -30,10 +31,12 @@ public class GradeGroup {
 
         @Override
         public String toString() {
+            // Get the String representation, return ?? if Unknown
             if (this == Unknown)
                 return "??";
             return super.toString();
         }
+
     }
 
     final Course myCourse;
@@ -73,6 +76,8 @@ public class GradeGroup {
         // 8 - Grading period
         // 9 - School id
 
+        // Match and construct the JSON data
+
         String begMonth = urlMatcher.group(2);
         String begDay = urlMatcher.group(3);
         String begYear = urlMatcher.group(4);
@@ -97,6 +102,7 @@ public class GradeGroup {
     }
 
     public static GradeGroup emptyGrade(Course myCourse, int gradingPeriod) {
+        // An empty GradeGroup bound to a course and grading period
         GradeGroup temp = new GradeGroup(myCourse, "", 0f, gradingPeriod, null);
         temp.setEmpty(true);
         return temp;

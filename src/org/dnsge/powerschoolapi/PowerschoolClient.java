@@ -21,6 +21,7 @@ public class PowerschoolClient {
     }
 
     private String fixUrl(String initialURL) {
+        // Make sure the URL is https and ends with a '/'
         String returnString = initialURL.toLowerCase();
 
         if (!returnString.substring(returnString.length() - 1).equals("/")) {
@@ -34,18 +35,23 @@ public class PowerschoolClient {
     }
 
     String urlify(String extension) {
+        // URL based off of the base install url
         return psInstallURL + (extension.charAt(0) == '/' ? extension.substring(1) : extension);
     }
 
     public User authenticate(String username, String password) {
+        // Authenticate a user
         try {
+            // Get loginpage for the contextData and pstoken
             Document loginPage = Jsoup.connect(urlify("public/home.html")).timeout(2000).get();
 
+            // Do hashing and other auth
             String contextData = loginPage.select("[name=contextData]").first().val();
             String pstoken = loginPage.select("[name=pstoken]").first().val();
             String dbpwField = PowerschoolAuth.getDBPWField(contextData, password);
             String pwField = PowerschoolAuth.getPWField(contextData, password);
 
+            // Send login post request
             Response loginPostResp = Jsoup.connect(urlify("guardian/home.html"))
                     .timeout(2000)
                     .method(Method.POST)
@@ -60,12 +66,14 @@ public class PowerschoolClient {
                     .data("ldappassword", password)
                     .execute();
 
+            // Make sure we logged in successfully
             if (!loginPostResp.body().contains("Grades and Attendance")) {
                 throw new PowerschoolLoginException("Invalid login information");
             }
 
             Map<String, String> mapCookies = loginPostResp.cookies();
 
+            // Data storage (Will replace with better, custom object)
             if (dataStorage.containsKey(username)) {
                 dataStorage.get(username).put("auth", mapCookies);
                 dataStorage.get(username).put("password", password);
@@ -76,6 +84,7 @@ public class PowerschoolClient {
                 dataStorage.put(username, userData);
             }
 
+            // Get homepage info
             Document gradesPage = Jsoup.connect(urlify("guardian/home.html"))
                     .timeout(2000)
                     .cookies(mapCookies)
@@ -91,6 +100,7 @@ public class PowerschoolClient {
 
     @SuppressWarnings("unchecked")
     public Document getAs(User user, String getUrl) {
+        // Get a url as a user
         try {
             return Jsoup.connect(urlify(getUrl))
                     .cookies((Map<String, String>)getUserData(user.username).get("auth"))
@@ -136,7 +146,7 @@ public class PowerschoolClient {
 
         Course cl = me.courseList.get(3);
         System.out.println(cl.courseName);
-        System.out.println(cl.getAssignments(cl.courseGrades.get(3)));
+        System.out.println(cl.getAssignments(GradeGroup.GradingPeriod.F1));
     }
 
 }
