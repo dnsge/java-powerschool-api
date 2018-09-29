@@ -5,22 +5,23 @@ import org.jsoup.nodes.Element;
 import org.jsoup.nodes.Node;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class User {
 
-    private final ArrayList<ClassPeriod> classList;
-    private final PowerschoolClient client;
-    private final Document constructionDoc;
-    private final String username;
-    private final String password;
-    private final String personName;
+    final ArrayList<Course> courseList;
+    final PowerschoolClient client;
+    final Document constructionDoc;
+    final String username;
+    final String password;
+    final String personName;
 
     public User(PowerschoolClient client, String username, Document doc) {
         this.client = client;
         this.constructionDoc = doc;
         this.username = username;
         this.password = (String)client.getUserData(username).get("password");
-        this.classList = new ArrayList<>();
+        this.courseList = new ArrayList<>();
 
         Node usernameContainer = doc.getElementById("userName").child(0).childNode(0);
         personName = usernameContainer.toString().trim();
@@ -29,33 +30,18 @@ public class User {
         Element mainContentContainer = quickLookupDoc.child(0).child(0);
         for (Element child : mainContentContainer.children()) {
             if (child.hasAttr("id")) {
-                ClassPeriod newPeriod = ClassPeriod.generateClassFromElement(child);
-                classList.add(newPeriod);
+                Course newPeriod = Course.generateCourseFromElement(child, this);
+                courseList.add(newPeriod);
             }
         }
     }
 
-    public String getUsername() {
-        return username;
+    public HashMap<String, String> getAuth() {
+        return client.getUserAuth(this);
     }
 
-    public String getPassword() {
-        return password;
+    public Document getAsSelf(String url) {
+        return client.getAs(this, url);
     }
 
-    public Document getConstructionDoc() {
-        return constructionDoc;
-    }
-
-    public String getPersonName() {
-        return personName;
-    }
-
-    public PowerschoolClient getClient() {
-        return client;
-    }
-
-    public ArrayList<ClassPeriod> getClassList() {
-        return classList;
-    }
 }
