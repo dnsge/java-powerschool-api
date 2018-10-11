@@ -1,5 +1,6 @@
 package org.dnsge.powerschoolapi.detail;
 
+import org.dnsge.powerschoolapi.util.ColumnMode;
 import org.json.JSONObject;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -21,14 +22,14 @@ public class GradeGroup {
     private static final Pattern urlMatcherPattern =
             Pattern.compile("guardian/scores\\.html\\?frn=(\\d+)&begdate=(\\d{2})/(\\d{2})/(\\d{4})&enddate=(\\d{2})/(\\d{2})/(\\d{4})&fg=([^&]+)&schoolid=(\\d+)", Pattern.CASE_INSENSITIVE | Pattern.MULTILINE);
 
-    public GradeGroup(Course myCourse, String letterGrade, float numberGrade, int gradingPeriod, String hrefAttrib) {
+    public GradeGroup(Course myCourse, String letterGrade, float numberGrade, ColumnMode gradingPeriod, String hrefAttrib) {
 
         this.myCourse = myCourse;
         this.letterGrade = letterGrade;
         this.numberGrade = numberGrade;
         this.hrefAttrib = "guardian/" + hrefAttrib;
 
-        this.gradingPeriod = GradingPeriod.fromNumber(gradingPeriod);
+        this.gradingPeriod = GradingPeriod.fromColumnMode(gradingPeriod);
         this.gradingPeriodName = this.gradingPeriod.toString();
 
     }
@@ -72,7 +73,7 @@ public class GradeGroup {
 
     }
 
-    public static GradeGroup emptyGrade(Course myCourse, int gradingPeriod) {
+    public static GradeGroup emptyGrade(Course myCourse, ColumnMode gradingPeriod) {
         // An empty GradeGroup bound to a course and grading period
         GradeGroup temp = new GradeGroup(myCourse, "", 0f, gradingPeriod, null);
         temp.setEmpty(true);

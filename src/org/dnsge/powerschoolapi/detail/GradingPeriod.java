@@ -1,5 +1,7 @@
 package org.dnsge.powerschoolapi.detail;
 
+import org.dnsge.powerschoolapi.util.ColumnMode;
+
 public enum GradingPeriod {
     Q1,
     Q2,
@@ -17,6 +19,27 @@ public enum GradingPeriod {
         } catch (ArrayIndexOutOfBoundsException e) {
             return GradingPeriod.Unknown;
         }
+    }
+
+    public static GradingPeriod fromColumnMode(ColumnMode mode) {
+        switch (mode.toString()) {
+            case "Q1":
+                return Q1;
+            case "Q2":
+                return Q2;
+            case "Q3":
+                return Q3;
+            case "Q4":
+                return Q4;
+            case "E1":
+                return E1;
+            case "E2":
+                return E2;
+            case "F1":
+                return F1;
+        }
+
+        return Unknown;
     }
 
     @Override

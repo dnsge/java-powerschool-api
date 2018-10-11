@@ -1,0 +1,85 @@
+package org.dnsge.powerschoolapi.util;
+
+import org.jsoup.nodes.Element;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+
+/**
+ * Enum class that refers to the Column that an Element is in
+ *
+ * @author Daniel Sage
+ */
+public enum ColumnMode {
+    EXP,
+    LAST_WEEK,
+    THIS_WEEK,
+    COURSE,
+    Q1,
+    Q2,
+    E1,
+    F1,
+    Q3,
+    Q4,
+    E2,
+    ABSENCES,
+    TARDIES;
+
+    public static ColumnMode fromString(String s) {
+        s = s.toLowerCase();
+
+        switch (s) {
+            case "exp":
+                return EXP;
+            case "last week":
+                return LAST_WEEK;
+            case "this week":
+                return THIS_WEEK;
+            case "course":
+                return COURSE;
+            case "q1":
+                return Q1;
+            case "q2":
+                return Q2;
+            case "e1":
+                return E1;
+            case "f1":
+                return F1;
+            case "q3":
+                return Q3;
+            case "q4":
+                return Q4;
+            case "e2":
+                return E2;
+            case "absences":
+                return ABSENCES;
+            case "tardies":
+                return TARDIES;
+        }
+
+        return null;
+    }
+
+    private boolean isGradingPeriod() {
+        return this == Q1 ||
+                this == Q2 ||
+                this == Q3 ||
+                this == Q4 ||
+                this == E1 ||
+                this == E2 ||
+                this == F1;
+    }
+
+    public static ArrayList<Pair<Element, ColumnMode>> allGradingElements(HashMap<ColumnMode, Element> input) {
+        ArrayList<Pair<Element, ColumnMode>> rList = new ArrayList<>();
+
+        for (ColumnMode c : input.keySet()) {
+            if (c.isGradingPeriod()) {
+                rList.add(new Pair<>(input.get(c), c));
+            }
+        }
+
+        return rList;
+    }
+}
+

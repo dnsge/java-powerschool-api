@@ -1,6 +1,9 @@
 package org.dnsge.powerschoolapi.detail;
 
 import org.dnsge.powerschoolapi.user.User;
+import org.dnsge.powerschoolapi.util.ColumnMode;
+import org.dnsge.powerschoolapi.util.Pair;
+import org.dnsge.powerschoolapi.util.ViewSpecification;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.jsoup.Connection;
@@ -10,6 +13,7 @@ import org.jsoup.nodes.Element;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -44,7 +48,15 @@ public class Course {
         this.user = user;
     }
 
-    public static Course generateCourseFromElement(Element genElement, User user) {
+
+    /**
+     * Generates a new {@code Course} from a {@code <tr>} HTML element
+     *
+     * @param genElement {@code <tr>} element to construct a class from
+     * @param user User that the new course belongs to
+     * @return The new course
+     */
+    public static Course generateCourseFromElement(Element genElement, User user, ViewSpecification viewSpecification) {
         String courseFrequency = genElement.child(0).html().trim();
         String courseName = "";
         String teacherFirstName = "";
@@ -56,42 +68,46 @@ public class Course {
         ArrayList<GradeGroup> courseGrades = new ArrayList<>();
         Course returnCourse = new Course(courseGrades, user);
 
-        int gradePeriodCounter = 0;
+        int columnCounter = 0;
+
+        HashMap<ColumnMode, Element> allElements = new HashMap<>();
 
         for (Element courseDetailElement : genElement.children()) {
-            // If element has the align attribute, it contains the course information
-            if (courseDetailElement.hasAttr("align")) {
-                courseName = courseDetailElement.childNode(0).toString().replace("&nbsp;", "");
-                String teacherDesc = courseDetailElement.childNode(2).attr("title");
-                teacherEmail = courseDetailElement.childNode(4).attr("href").substring(7);
-                try {
-                    room = courseDetailElement.childNode(5).toString().replace("&nbsp;", "").substring(5);
-                } catch (IndexOutOfBoundsException ignored){}
+            allElements.put(viewSpecification.getAt(columnCounter), courseDetailElement);
+            columnCounter++;
+        }
 
-                Matcher teacherMatcher = teacherNamePattern.matcher(teacherDesc);
-                teacherMatcher.matches();
-                teacherLastName = teacherMatcher.group(1);
-                teacherFirstName = teacherMatcher.group(2);
+        // Populate information from the 'Course' header
+        Element courseDescriptorElement = allElements.get(ColumnMode.COURSE);
+        courseName = courseDescriptorElement.childNode(0).toString().replace("&nbsp;", "");
+        String teacherDesc = courseDescriptorElement.childNode(2).attr("title");
+        teacherEmail = courseDescriptorElement.childNode(4).attr("href").substring(7);
+        try {
+            room = courseDescriptorElement.childNode(5).toString().replace("&nbsp;", "").substring(5);
+        } catch (IndexOutOfBoundsException ignored){}
+
+        Matcher teacherMatcher = teacherNamePattern.matcher(teacherDesc);
+        teacherMatcher.matches();
+        teacherLastName = teacherMatcher.group(1);
+        teacherFirstName = teacherMatcher.group(2);
+
+        ArrayList<Pair<Element, ColumnMode>> gradingElements = ColumnMode.allGradingElements(allElements);
+        for (Pair<Element, ColumnMode> gradeElementPair : gradingElements) {
+            Element gradeElement;
+            try {
+                gradeElement = gradeElementPair.getL().child(0);
+            } catch (IndexOutOfBoundsException e) { // Sometimes instead of [ i ] it's just blank
+                courseGrades.add(GradeGroup.emptyGrade(returnCourse, gradeElementPair.getR()));
+                continue;
             }
-
-            // If the element has at least one child and that child is an <a> tag
-            if (courseDetailElement.children().size() != 0) {
-                if (courseDetailElement.child(0).tagName().equals("a")) {
-
-                    Element gradeElementATag = courseDetailElement.child(0);
-
-                    if (!gradeElementATag.childNode(0).toString().equals("[ i ]")) {
-                        // Get the grade group information
-                        String letterGrade = gradeElementATag.childNode(0).toString();
-                        float numberGrade = Float.parseFloat(gradeElementATag.childNode(2).toString());
-                        courseGrades.add(new GradeGroup(returnCourse, letterGrade, numberGrade, gradePeriodCounter, gradeElementATag.attr("href")));
-                    } else {
-                        // No grades exist in this specific group
-                        courseGrades.add(GradeGroup.emptyGrade(returnCourse, gradePeriodCounter));
-                    }
-                    gradePeriodCounter++;
-
-                }
+            // If there is no grade yet
+            if (gradeElement.childNode(0).toString().equals("[ i ]")) {
+                courseGrades.add(GradeGroup.emptyGrade(returnCourse, gradeElementPair.getR()));
+            } else {
+                String letterGrade = gradeElement.childNode(0).toString();
+                float numberGrade = Float.parseFloat(gradeElement.childNode(2).toString());
+                System.out.println("Adding the real class!");
+                courseGrades.add(new GradeGroup(returnCourse, letterGrade, numberGrade, gradeElementPair.getR(), gradeElement.attr("href")));
             }
         }
 

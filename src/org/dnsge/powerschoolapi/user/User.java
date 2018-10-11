@@ -3,6 +3,7 @@ package org.dnsge.powerschoolapi.user;
 import org.dnsge.powerschoolapi.client.PowerschoolClient;
 import org.dnsge.powerschoolapi.detail.Course;
 import org.dnsge.powerschoolapi.detail.CourseGetter;
+import org.dnsge.powerschoolapi.util.ViewSpecification;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.nodes.Node;
@@ -30,10 +31,12 @@ public class User {
 
         // Scan and find the content on user homepage, create courses from it
         Element quickLookupDoc = doc.getElementById("quickLookup");
-        Element mainContentContainer = quickLookupDoc.child(0).child(0);
+        Element mainContentContainer = quickLookupDoc.child(0).child(0); // <tbody> element
+        Element rowSpecification = mainContentContainer.child(1);
+        ViewSpecification viewSpecification = new ViewSpecification(rowSpecification);
         for (Element child : mainContentContainer.children()) {
             if (child.hasAttr("id")) {
-                courses.add(Course.generateCourseFromElement(child, this));
+                courses.add(Course.generateCourseFromElement(child, this, viewSpecification));
             }
         }
     }
