@@ -106,7 +106,6 @@ public class Course {
             } else {
                 String letterGrade = gradeElement.childNode(0).toString();
                 float numberGrade = Float.parseFloat(gradeElement.childNode(2).toString());
-                System.out.println("Adding the real class!");
                 courseGrades.add(new GradeGroup(returnCourse, letterGrade, numberGrade, gradeElementPair.getR(), gradeElement.attr("href")));
             }
         }
