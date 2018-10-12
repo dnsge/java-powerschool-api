@@ -2,6 +2,11 @@ package org.dnsge.powerschoolapi.detail;
 
 import org.dnsge.powerschoolapi.util.ColumnMode;
 
+/**
+ * Enum that represents a specific GradingPeriod for a GradeGroup
+ *
+ * @author Daniel Sage
+ */
 public enum GradingPeriod {
     Q1,
     Q2,
@@ -12,6 +17,12 @@ public enum GradingPeriod {
     E2,
     Unknown;
 
+    /**
+     * Finds the specific GradingPeriod from a number
+     *
+     * @param numb Index of enum
+     * @return Desired Enum
+     */
     public static GradingPeriod fromNumber(int numb) {
         // Get a GradingPeriod from the number that corresponds with it
         try {
@@ -21,6 +32,13 @@ public enum GradingPeriod {
         }
     }
 
+    /**
+     * Converts a {@code ColumnMode} to a {@code GradingPeriod}
+     *
+     * @param mode ColumnMode to convert
+     * @return Desired ColumnMode as a GradingPeriod
+     * @see ColumnMode
+     */
     public static GradingPeriod fromColumnMode(ColumnMode mode) {
         switch (mode.toString()) {
             case "Q1":

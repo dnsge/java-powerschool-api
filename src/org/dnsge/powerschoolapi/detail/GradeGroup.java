@@ -9,6 +9,11 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 
+/**
+ * Class that represents a group of grades
+ *
+ * @author Daniel Sage
+ */
 public class GradeGroup {
 
     final Course myCourse;
@@ -22,6 +27,15 @@ public class GradeGroup {
     private static final Pattern urlMatcherPattern =
             Pattern.compile("guardian/scores\\.html\\?frn=(\\d+)&begdate=(\\d{2})/(\\d{2})/(\\d{4})&enddate=(\\d{2})/(\\d{2})/(\\d{4})&fg=([^&]+)&schoolid=(\\d+)", Pattern.CASE_INSENSITIVE | Pattern.MULTILINE);
 
+    /**
+     * General constructor
+     *
+     * @param myCourse {@code Course} that this GradeGroup belongs to
+     * @param letterGrade Grade as a letter for GradeGroup
+     * @param numberGrade Grade as a number for GradeGroup
+     * @param gradingPeriod Period of Grading (Whole year, quarter 1, ect)
+     * @param hrefAttrib Partial URL that contains a link to the page for the assignments within this specific GradeGroup
+     */
     public GradeGroup(Course myCourse, String letterGrade, float numberGrade, ColumnMode gradingPeriod, String hrefAttrib) {
 
         this.myCourse = myCourse;
@@ -34,6 +48,12 @@ public class GradeGroup {
 
     }
 
+    /**
+     * Retrieves a {@code JSONObject} that represents every assignment in the GradeGroup
+     *
+     * @return The new JSONObject
+     * @see JSONObject
+     */
     JSONObject getJsonPostForAssignments() {
         Matcher urlMatcher = urlMatcherPattern.matcher(hrefAttrib);
         urlMatcher.matches();
@@ -70,9 +90,15 @@ public class GradeGroup {
         returnObject.put("section_ids", new String[]{sectionId});
 
         return returnObject;
-
     }
 
+    /**
+     * Creates a new GradeGroup that is 'empty'
+     *
+     * @param myCourse {@code Course} that the GradeGroup belongs to
+     * @param gradingPeriod Period of Grading (Whole year, quarter 1, ect)
+     * @return new GradeGroup object with the desired attributes
+     */
     public static GradeGroup emptyGrade(Course myCourse, ColumnMode gradingPeriod) {
         // An empty GradeGroup bound to a course and grading period
         GradeGroup temp = new GradeGroup(myCourse, "", 0f, gradingPeriod, null);

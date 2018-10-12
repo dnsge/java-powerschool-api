@@ -1,4 +1,4 @@
-package org.dnsge.powerschoolapi;
+package org.dnsge.powerschoolapi.client;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
@@ -8,8 +8,19 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
 import java.util.Formatter;
 
+/**
+ * Class that holds authentication / cryptographic methods for logging into Powerschool
+ *
+ * @author Daniel Sage
+ */
 public class PowerschoolAuth {
 
+    /**
+     * Returns a hex String from a byte[]
+     *
+     * @param bytes byte[] to convert
+     * @return String with hex digits
+     */
     private static String toHexString(byte[] bytes) {
         Formatter formatter = new Formatter();
 
@@ -20,6 +31,13 @@ public class PowerschoolAuth {
         return formatter.toString();
     }
 
+    /**
+     * Calculates a HMAC MD5 from data and a key
+     *
+     * @param data Data to hash
+     * @param key Key to use
+     * @return Hashed data
+     */
     private static String hmacMD5(String data, String key) {
         try {
             SecretKeySpec signingKey = new SecretKeySpec(key.getBytes(), "HmacMD5");
@@ -33,10 +51,24 @@ public class PowerschoolAuth {
         }
     }
 
+    /**
+     * Creates the {@code dbpw} field needed for submitting a Powerschool login request
+     *
+     * @param contextData ContextData from a hidden form value
+     * @param password Password of user
+     * @return Desired dbpw value
+     */
     public static String getDBPWField(String contextData, String password) {
         return hmacMD5(password.toLowerCase(), contextData);
     }
 
+    /**
+     * Creates the {@code pw} field (different from the raw password) needed for submitting a Powerschool login request
+     *
+     * @param contextData ContextData from a hidden form value
+     * @param password Password of user
+     * @return Desired pw value
+     */
     public static String getPWField(String contextData, String password) {
         try {
             MessageDigest m = MessageDigest.getInstance("MD5");

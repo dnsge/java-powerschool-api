@@ -1,6 +1,5 @@
 package org.dnsge.powerschoolapi.client;
 
-import org.dnsge.powerschoolapi.PowerschoolAuth;
 import org.dnsge.powerschoolapi.user.User;
 import org.dnsge.powerschoolapi.user.UserConfig;
 import org.jsoup.Connection.Method;
@@ -11,16 +10,33 @@ import org.jsoup.nodes.Document;
 import java.io.IOException;
 import java.util.Map;
 
+/**
+ * Client to interface with a Powerschool Student Portal
+ *
+ * @author Daniel Sage
+ */
 public class PowerschoolClient {
 
     private String psInstallURL;
     private ClientStorage storage;
 
+    /**
+     * Constructor for new PowerschoolClient
+     *
+     * @param psInstallURL Install URL of the Powerschool server
+     */
     public PowerschoolClient(String psInstallURL) {
-            this.psInstallURL = fixUrl(psInstallURL);
-            this.storage = new ClientStorage();
+        this.psInstallURL = fixUrl(psInstallURL);
+        this.storage = new ClientStorage();
     }
 
+    /**
+     * Ensures that a supplied URL is ended with a '/' and that it is using HTTPS
+     *
+     * @param initialURL URL to fix
+     * @return Fixed URL
+     * @throws RuntimeException if HTTPS Schema is missing
+     */
     private String fixUrl(String initialURL) {
         // Make sure the URL is https and ends with a '/'
         String returnString = initialURL.toLowerCase();
@@ -35,61 +51,81 @@ public class PowerschoolClient {
         return returnString;
     }
 
+    /**
+     * Generates a complete URL from the base install url
+     *
+     * @param extension Extension of the base install url
+     * @return Extended URL
+     */
     public String urlify(String extension) {
         // URL based off of the base install url
         return psInstallURL + (extension.charAt(0) == '/' ? extension.substring(1) : extension);
     }
 
-    public User authenticate(String username, String password) {
+    /**
+     * Logs in a user to a Powerschool Student Portal
+     * <p>
+     * Returns a new {@code User} object populated with course information
+     *
+     * @param username Username to login with
+     * @param password Password to login with
+     * @return {@code User} object
+     * @throws IOException if something goes wrong
+     * @throws PowerschoolLoginException if invalid username/password
+     */
+    public User authenticate(String username, String password) throws IOException {
         // Authenticate a user
-        try {
-            // Get loginpage for the contextData and pstoken
-            Document loginPage = Jsoup.connect(urlify("public/home.html")).timeout(2000).get();
+        // Get login page for the contextData and pstoken
+        Document loginPage = Jsoup.connect(urlify("public/home.html")).timeout(2000).get();
 
-            // Do hashing and other auth
-            String contextData = loginPage.select("[name=contextData]").first().val();
-            String pstoken = loginPage.select("[name=pstoken]").first().val();
-            String dbpwField = PowerschoolAuth.getDBPWField(contextData, password);
-            String pwField = PowerschoolAuth.getPWField(contextData, password);
+        // Do hashing and other auth
+        String contextData = loginPage.select("[name=contextData]").first().val();
+        String pstoken = loginPage.select("[name=pstoken]").first().val();
+        String dbpwField = PowerschoolAuth.getDBPWField(contextData, password);
+        String pwField = PowerschoolAuth.getPWField(contextData, password);
 
-            // Send login post request
-            Response loginPostResp = Jsoup.connect(urlify("guardian/home.html"))
-                    .timeout(2000)
-                    .method(Method.POST)
-                    .data("pstoken", pstoken)
-                    .data("contextData", contextData)
-                    .data("dbpw", dbpwField)
-                    .data("serviceName", "PS Parent Portal")
-                    .data("pcasServerURL", "/")
-                    .data("credentialType", "User Id and Password Credential")
-                    .data("account", username)
-                    .data("pw", pwField)
-                    .data("ldappassword", password)
-                    .execute();
+        // Send login post request
+        Response loginPostResp = Jsoup.connect(urlify("guardian/home.html"))
+                .timeout(2000)
+                .method(Method.POST)
+                .data("pstoken", pstoken)
+                .data("contextData", contextData)
+                .data("dbpw", dbpwField)
+                .data("serviceName", "PS Parent Portal")
+                .data("pcasServerURL", "/")
+                .data("credentialType", "User Id and Password Credential")
+                .data("account", username)
+                .data("pw", pwField)
+                .data("ldappassword", password)
+                .execute();
 
-            // Make sure we logged in successfully
-            if (!loginPostResp.body().contains("Grades and Attendance")) {
-                throw new PowerschoolLoginException("Invalid login information");
-            }
-
-            Map<String, String> mapCookies = loginPostResp.cookies();
-
-            // Get homepage info
-            Document gradesPage = Jsoup.connect(urlify("guardian/home.html"))
-                    .timeout(2000)
-                    .cookies(mapCookies)
-                    .get();
-
-            UserConfig config = new UserConfig(this, username, password, gradesPage, mapCookies);
-            storage.register(config);
-            return new User(config);
-
-        } catch (IOException e) {
-            e.printStackTrace();
-            return null;
+        // Make sure we logged in successfully
+        if (!loginPostResp.body().contains("Grades and Attendance")) {
+            throw new PowerschoolLoginException("Invalid login information");
         }
+
+        Map<String, String> mapCookies = loginPostResp.cookies();
+
+        // Get homepage info
+        Document gradesPage = Jsoup.connect(urlify("guardian/home.html"))
+                .timeout(2000)
+                .cookies(mapCookies)
+                .get();
+
+        UserConfig config = new UserConfig(this, username, password, gradesPage, mapCookies);
+        storage.register(config);
+        return new User(config);
+
     }
 
+    /**
+     * Preforms a GET request with the authentication cookies of a {@code User} object
+     *
+     * @param user User object to utilize
+     * @param getUrl Non-URLified url to get
+     * @return {@code Document} object from GET request
+     * @see Document
+     */
     public Document getAs(User user, String getUrl) {
         // Get a url as a user
         try {
@@ -102,6 +138,9 @@ public class PowerschoolClient {
         }
     }
 
+    /**
+     * @return Powerschool Install URL
+     */
     public String getPsInstallURL() {
         return psInstallURL;
     }

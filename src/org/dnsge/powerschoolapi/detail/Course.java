@@ -17,6 +17,11 @@ import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * Object that represents a Course in Powerschool
+ *
+ * @author Daniel Sage
+ */
 public class Course {
 
     private static final Pattern teacherNamePattern =
@@ -31,6 +36,18 @@ public class Course {
     final User user;
     final ArrayList<GradeGroup> courseGrades;
 
+    /**
+     * Basic constructor for a Course
+     *
+     * @param courseName Name of the Course
+     * @param courseFrequency Frequency 'code' of the Course
+     * @param teacherFirstName Teacher's first name
+     * @param teacherLastName Teacher's last name
+     * @param teacherEmail Teacher's email
+     * @param room Course's room number
+     * @param courseGrades ArrayList of course's grades
+     * @param user User which the Course belongs to
+     */
     public Course(String courseName, String courseFrequency, String teacherFirstName, String teacherLastName,
                   String teacherEmail, String room, ArrayList<GradeGroup> courseGrades, User user) {
         this.courseName = courseName;
@@ -43,6 +60,12 @@ public class Course {
         this.user = user;
     }
 
+    /**
+     * Constructor for a Course with incomplete information
+     *
+     * @param courseGrades ArrayList of grades
+     * @param user User which the Course belongs to
+     */
     public Course(ArrayList<GradeGroup> courseGrades, User user) {
         this.courseGrades = courseGrades;
         this.user = user;
@@ -54,6 +77,7 @@ public class Course {
      *
      * @param genElement {@code <tr>} element to construct a class from
      * @param user User that the new course belongs to
+     * @param viewSpecification {@code ViewSpecification} that should be used to make the Course
      * @return The new course
      */
     public static Course generateCourseFromElement(Element genElement, User user, ViewSpecification viewSpecification) {
@@ -121,6 +145,14 @@ public class Course {
         return returnCourse;
     }
 
+    /**
+     * Gets the {@code GradeGroup} object for this Course during a specific {@code GradingPeriod}
+     *
+     * @param gradingPeriod GradingPeriod which to get the GradeGroup from
+     * @return GradeGroup found
+     * @see GradingPeriod
+     * @see GradeGroup
+     */
     public GradeGroup getGradeGroup(GradingPeriod gradingPeriod) {
         for (GradeGroup gg : courseGrades) {
             if (gg.gradingPeriod == gradingPeriod)
@@ -129,6 +161,13 @@ public class Course {
         return null;
     }
 
+    /**
+     * Gets all assignments for this Course
+     *
+     * @param gradingPeriod {@code GradingPeriod} which to get the assignments from
+     * @return ArrayList of assignments found
+     * @see Assignment
+     */
     public ArrayList<Assignment> getAssignments(GradingPeriod gradingPeriod) {
         GradeGroup gradeGroup = getGradeGroup(gradingPeriod);
 
@@ -137,6 +176,7 @@ public class Course {
         }
 
         // JSON post data with start, end dates and section ids
+        // todo: save the assignment data
         JSONObject postData = gradeGroup.getJsonPostForAssignments();
 
         try {

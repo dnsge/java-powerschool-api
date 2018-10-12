@@ -11,6 +11,11 @@ import org.jsoup.nodes.Node;
 import java.util.ArrayList;
 import java.util.Map;
 
+/**
+ * Class that represents a logged in Powerschool user
+ *
+ * @author Daniel Sage
+ */
 public class User {
 
     final ArrayList<Course> courses;
@@ -18,6 +23,12 @@ public class User {
     final UserConfig config;
     final String username;
 
+    /**
+     * Constructor for a User based off of a {@code UserConfig} object
+     *
+     * @param config UserConfig to base the User off of
+     * @see UserConfig
+     */
     public User(UserConfig config) {
         this.config = config;
         this.username = config.username;
@@ -41,16 +52,30 @@ public class User {
         }
     }
 
+    /**
+     * @return Authentication Cookies for this User
+     */
     public Map<String, String> getAuth() {
         // Get the auth data for this user
         return config.authData;
     }
 
+    /**
+     * Asks own {@code PowerschoolClient} to preform a GET reqeust with
+     * its own authentication data
+     *
+     * @param url Partial url to GET
+     * @return Document from GET request
+     * @see PowerschoolClient
+     */
     public Document getAsSelf(String url) {
         // GET request as this user with its auth
         return config.client.getAs(this, url);
     }
 
+    /**
+     * @return New CourseGetter based off of this User's courses
+     */
     public CourseGetter newCourseGetter() {
         return new CourseGetter(courses);
     }

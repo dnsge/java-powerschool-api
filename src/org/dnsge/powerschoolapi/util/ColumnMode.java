@@ -25,6 +25,12 @@ public enum ColumnMode {
     ABSENCES,
     TARDIES;
 
+    /**
+     * Gets a specific ColumnMode from a String
+     *
+     * @param s String to get from
+     * @return Appropriate ColumnMode
+     */
     public static ColumnMode fromString(String s) {
         s = s.toLowerCase();
 
@@ -60,6 +66,9 @@ public enum ColumnMode {
         return null;
     }
 
+    /**
+     * @return whether the ColumnMode is a Grading Period
+     */
     private boolean isGradingPeriod() {
         return this == Q1 ||
                 this == Q2 ||
@@ -70,6 +79,12 @@ public enum ColumnMode {
                 this == F1;
     }
 
+    /**
+     * Gets all elements and their corresponding ColumnMode if the ColumnMode is a grading period
+     *
+     * @param input HashMap of ColumnModes and JSoup Elements
+     * @return ArrayList of Pairs of Elements and ColumnModes
+     */
     public static ArrayList<Pair<Element, ColumnMode>> allGradingElements(HashMap<ColumnMode, Element> input) {
         ArrayList<Pair<Element, ColumnMode>> rList = new ArrayList<>();
 

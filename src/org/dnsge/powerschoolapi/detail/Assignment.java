@@ -8,6 +8,13 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+/**
+ * Object that represents an Assignment in Powerschool
+ * <p>
+ * Exposes many fields with information about the assignment
+ *
+ * @author Daniel Sage
+ */
 public class Assignment {
 
     public final String name;
@@ -29,6 +36,19 @@ public class Assignment {
 
     public final boolean isMissingDetails;
 
+    /**
+     * Basic constructor for an Assignment
+     *
+     * @param name Assignment Name
+     * @param assignmentId Assignment ID
+     * @param totalPoints Total points possible
+     * @param scoredPoints Scored points
+     * @param scorePercent Percentage grade
+     * @param scoreLetterGrade Letter Grade
+     * @param dates Array of Dates, dates[0] is the due date String, dates[1] is the entry date String
+     * @param flags Array of booleans, in the order of: isCollected, isLate, isMissing, isExempt, isAbsent, isIncomplete
+     * @param isMissingDetails Whether the assignment is not fully generated/populated
+     */
     private Assignment(String name, Integer assignmentId, Integer totalPoints, Integer scoredPoints, Float scorePercent,
                       String scoreLetterGrade, String[] dates, Boolean[] flags, boolean isMissingDetails) {Date dueDate1;
         Date scoreEntryDate1;
@@ -71,11 +91,26 @@ public class Assignment {
         scoreEntryDate = scoreEntryDate1;
     }
 
+    /**
+     * Constructor for a semi-completed Assignment
+     *
+     * @param name Assignment name
+     * @param assignmentId Assignment ID
+     * @param totalPoints Total points possible
+     * @param dueDateString Due date as String
+     */
     private Assignment(String name, Integer assignmentId, Integer totalPoints, String dueDateString) {
         this(name, assignmentId, totalPoints, null, null, null,
                 new String[]{dueDateString, null}, new Boolean[]{null, null, null, null, null, null}, true);
     }
 
+    /**
+     * Gets an integer from a JSONObject if it exists, else returns null
+     *
+     * @param jo JSONObject to get int from
+     * @param key Key to get
+     * @return Integer found or null
+     */
     private static Integer getIntOrNull(JSONObject jo, String key) {
         try {
             return jo.getInt(key);
@@ -84,6 +119,13 @@ public class Assignment {
         }
     }
 
+    /**
+     * Gets an float from a JSONObject if it exists, else returns null
+     *
+     * @param jo JSONObject to get float from
+     * @param key Key to get
+     * @return Float found or null
+     */
     private static Float getFloatOrNull(JSONObject jo, String key) {
         try {
             return jo.getFloat(key);
@@ -92,6 +134,13 @@ public class Assignment {
         }
     }
 
+    /**
+     * Gets an String from a JSONObject if it exists, else returns null
+     *
+     * @param jo JSONObject to get String from
+     * @param key Key to get
+     * @return String found or null
+     */
     private static String getStringOrNull(JSONObject jo, String key) {
         try {
             return jo.getString(key);
@@ -100,6 +149,13 @@ public class Assignment {
         }
     }
 
+    /**
+     * Gets an Boolean from a JSONObject if it exists, else returns null
+     *
+     * @param jo JSONObject to get Boolean from
+     * @param key Key to get
+     * @return Boolean found or null
+     */
     private static Boolean getBooleanOrNull(JSONObject jo, String key) {
         try {
             return jo.getBoolean(key);
@@ -108,6 +164,15 @@ public class Assignment {
         }
     }
 
+    /**
+     * Creates a new Assignment from a JSONObject retrieved by a {@code PowerschoolClient} and asked for by a {@code Course} object
+     *
+     * @param assignmentJSON JSONObject to use to construct the Assignment
+     * @return New Assignment object from JSONObject
+     * @see JSONObject
+     * @see org.dnsge.powerschoolapi.client.PowerschoolClient
+     * @see Course
+     */
     static Assignment generateFromJsonObject(JSONObject assignmentJSON) {
         try {
             // Read the JSONObject and create a new Assignment object from it
