@@ -16,6 +16,7 @@ import java.util.Map;
  * Class that represents a logged in Powerschool user
  *
  * @author Daniel Sage
+ * @version 0.1
  */
 public class User {
 

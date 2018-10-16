@@ -14,6 +14,7 @@ import java.util.Date;
  * Exposes many fields with information about the assignment
  *
  * @author Daniel Sage
+ * @version 0.1
  */
 public class Assignment {
 

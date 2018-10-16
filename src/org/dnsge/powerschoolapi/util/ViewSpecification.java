@@ -8,6 +8,7 @@ import java.util.ArrayList;
  * Class that represents a specific specification of Column Layouts on a powerschool homepage
  *
  * @author Daniel Sage
+ * @version 0.1
  */
 public class ViewSpecification {
 

@@ -22,6 +22,7 @@ import java.util.regex.Pattern;
  * Object that represents a Course in Powerschool
  *
  * @author Daniel Sage
+ * @version 0.1
  */
 public class Course {
 

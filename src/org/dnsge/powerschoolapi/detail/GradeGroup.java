@@ -13,6 +13,7 @@ import java.util.regex.Pattern;
  * Class that represents a group of grades
  *
  * @author Daniel Sage
+ * @version 0.1
  */
 public class GradeGroup {
 

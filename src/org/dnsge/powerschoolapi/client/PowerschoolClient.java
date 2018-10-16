@@ -14,6 +14,7 @@ import java.util.Map;
  * Client to interface with a Powerschool Student Portal
  *
  * @author Daniel Sage
+ * @version 0.1
  */
 public class PowerschoolClient {
 

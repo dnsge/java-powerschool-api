@@ -7,6 +7,7 @@ package org.dnsge.powerschoolapi.util;
  *
  * @param <L> Type of Left Object
  * @param <R> Type of Right Object
+ * @version 0.1
  */
 public class Pair<L, R> {
     private L l;

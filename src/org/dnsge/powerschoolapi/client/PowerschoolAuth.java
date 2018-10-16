@@ -12,6 +12,7 @@ import java.util.Formatter;
  * Class that holds authentication / cryptographic methods for logging into Powerschool
  *
  * @author Daniel Sage
+ * @version 1.0
  */
 public class PowerschoolAuth {
 

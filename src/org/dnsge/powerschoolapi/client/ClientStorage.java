@@ -9,6 +9,7 @@ import java.util.HashMap;
  * Cookie / User information storage object for {@code PowerschoolClient}
  *
  * @author Daniel Sage
+ * @version 0.1
  * @see PowerschoolClient
  */
 public class ClientStorage {

@@ -9,6 +9,7 @@ import java.util.Map;
  * Class that represents a User's configuration
  *
  * @author Daniel Sage
+ * @version 0.1
  * @see User
  */
 public class UserConfig {

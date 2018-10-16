@@ -10,6 +10,7 @@ import java.util.List;
  * Allows the use of method chaining
  *
  * @author Daniel Sage
+ * @version 0.1
  */
 public class CourseGetter {
     private ArrayList<Course> currentCourses;
