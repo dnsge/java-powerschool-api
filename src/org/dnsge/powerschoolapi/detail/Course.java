@@ -29,14 +29,14 @@ public class Course {
     private static final Pattern teacherNamePattern =
             Pattern.compile("^Details about (.*?), (.*?)$",Pattern.MULTILINE | Pattern.CASE_INSENSITIVE);
 
-    String courseName;
-    String courseFrequency;
-    String teacherFirstName;
-    String teacherLastName;
-    String teacherEmail;
-    String room;
-    final User user;
-    final ArrayList<GradeGroup> courseGrades;
+    private String courseName;
+    private String courseFrequency;
+    private String teacherFirstName;
+    private String teacherLastName;
+    private String teacherEmail;
+    private String room;
+    private final User user;
+    private final ArrayList<GradeGroup> courseGrades;
 
     /**
      * Basic constructor for a Course
@@ -72,7 +72,6 @@ public class Course {
         this.courseGrades = courseGrades;
         this.user = user;
     }
-
 
     /**
      * Generates a new {@code Course} from a {@code <tr>} HTML element
@@ -170,7 +169,7 @@ public class Course {
      * @return ArrayList of assignments found
      * @see Assignment
      */
-    public ArrayList<Assignment> getAssignments(GradingPeriod gradingPeriod) {
+    public List<Assignment> getAssignments(GradingPeriod gradingPeriod) {
         GradeGroup gradeGroup = getGradeGroup(gradingPeriod);
 
         if (gradeGroup == null || gradeGroup.isEmpty()) {
@@ -210,43 +209,67 @@ public class Course {
         return null;
     }
 
+    /**
+     * @return A {@code String} formatted like {@code "{Course Name} - {Teacher Last Name} ({Course Grades toString()})"}
+     */
     @Override
     public String toString() {
         return courseName + " - " + teacherLastName + " (" + courseGrades.toString() + ")";
     }
 
+    /**
+     * @return {@code Course} grades
+     */
     public List<GradeGroup> getCourseGrades() {
         return courseGrades;
     }
 
-    public static Pattern getTeacherNamePattern() {
-        return teacherNamePattern;
-    }
-
+    /**
+     * @return {@code Course} frequency code
+     */
     public String getCourseFrequency() {
         return courseFrequency;
     }
 
+    /**
+     * @return {@code Course} name
+     */
     public String getCourseName() {
         return courseName;
     }
 
+    /**
+     * @return {@code Course} room number (might not exist)
+     */
     public String getRoom() {
         return room;
     }
 
+    /**
+     * @return {@code Course} teacher's email address
+     */
     public String getTeacherEmail() {
         return teacherEmail;
     }
 
+    /**
+     * @return {@code Course} teacher's first name
+     */
     public String getTeacherFirstName() {
         return teacherFirstName;
     }
 
+    /**
+     * @return {@code Course} teacher's last name
+     */
     public String getTeacherLastName() {
         return teacherLastName;
     }
 
+    /**
+     * @return {@code User} that owns this {@code Course}
+     * @see User
+     */
     public User getUser() {
         return user;
     }

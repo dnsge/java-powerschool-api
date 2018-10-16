@@ -82,22 +82,39 @@ public class User {
         return new CourseGetter(courses);
     }
 
+    /**
+     * @return {@code User} username
+     */
     public String getUsername() {
         return username;
     }
 
+    /**
+     * @return {@code User} {@code UserConfig}
+     * @see UserConfig
+     */
     public UserConfig getConfig() {
         return config;
     }
 
+    /**
+     * @return {@code User} {@code PowerschoolClient}
+     * @see PowerschoolClient
+     */
     public PowerschoolClient getClient() {
         return config.client;
     }
 
+    /**
+     * @return {@code User} courses
+     */
     public List<Course> getCourses() {
         return courses;
     }
 
+    /**
+     * @return {@code User} name of the person in real life
+     */
     public String getPersonName() {
         return personName;
     }

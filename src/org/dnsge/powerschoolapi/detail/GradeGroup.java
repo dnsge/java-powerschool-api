@@ -81,7 +81,7 @@ public class GradeGroup {
         String formattedBegDate = begYear + "-" + begMonth + "-" + begDay;
         String formattedEndDate = endYear + "-" + endMonth + "-" + endDay;
 
-        Document dd = myCourse.user.getAsSelf(hrefAttrib);
+        Document dd = myCourse.getUser().getAsSelf(hrefAttrib);
         Element target = dd.getElementById("content-main").child(2).child(6).child(0);
         String sectionId = target.attr("data-sectionid");
 
@@ -115,34 +115,60 @@ public class GradeGroup {
             return "Empty grade in " + gradingPeriodName;
     }
 
+    /**
+     * @return Whether this {@code GradeGroup} has no grades
+     */
     public boolean isEmpty() {
         return isEmpty;
     }
 
+    /**
+     * @param empty Whether this {@code GradeGroup} has no grades
+     */
     public void setEmpty(boolean empty) {
         isEmpty = empty;
     }
 
+    /**
+     * @return {@code Course} that this {@code GradeGroup} belongs to
+     * @see Course
+     */
     public Course getMyCourse() {
         return myCourse;
     }
 
+    /**
+     * @return {@code GradeGroup} letter grade
+     */
     public String getLetterGrade() {
         return letterGrade;
     }
 
+    /**
+     * @return {@code GradeGroup} grade as a decimal out of 100
+     */
     public float getNumberGrade() {
         return numberGrade;
     }
 
+    /**
+     * @return The {@code GradingPeriod} of this {@code GradeGroup}
+     * @see GradingPeriod
+     */
     public GradingPeriod getGradingPeriod() {
         return gradingPeriod;
     }
 
+    /**
+     * @return The name of the grading period of this {@code GradeGroup}
+     */
     public String getGradingPeriodName() {
         return gradingPeriodName;
     }
 
+    /**
+     * @return The href attribute of the {@code Element} used to make this GradeGroup
+     */
     public String getHrefAttrib() {
         return hrefAttrib;
     }

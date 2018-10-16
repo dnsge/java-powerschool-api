@@ -35,7 +35,7 @@ public class CourseGetter {
         ArrayList<Course> newLimited = new ArrayList<>();
 
         for (Course c : currentCourses)
-            if (c.courseName.equals(name))
+            if (c.getCourseName().equals(name))
                 newLimited.add(c);
 
         currentCourses = newLimited;
@@ -52,7 +52,7 @@ public class CourseGetter {
         ArrayList<Course> newLimited = new ArrayList<>();
 
         for (Course c : currentCourses)
-            if (c.courseName.contains(name))
+            if (c.getCourseName().contains(name))
                 newLimited.add(c);
 
         currentCourses = newLimited;
@@ -69,7 +69,7 @@ public class CourseGetter {
         ArrayList<Course> newLimited = new ArrayList<>();
 
         for (Course c : currentCourses)
-            if (c.courseFrequency.equals(courseFrequency))
+            if (c.getCourseFrequency().equals(courseFrequency))
                 newLimited.add(c);
 
         currentCourses = newLimited;
@@ -86,7 +86,7 @@ public class CourseGetter {
         ArrayList<Course> newLimited = new ArrayList<>();
 
         for (Course c : currentCourses)
-            if (c.courseFrequency.contains(courseFrequency))
+            if (c.getCourseFrequency().contains(courseFrequency))
                 newLimited.add(c);
 
         currentCourses = newLimited;
@@ -103,7 +103,7 @@ public class CourseGetter {
         ArrayList<Course> newLimited = new ArrayList<>();
 
         for (Course c : currentCourses)
-            if (c.teacherLastName.equals(teacherLastName))
+            if (c.getTeacherLastName().equals(teacherLastName))
                 newLimited.add(c);
 
         currentCourses = newLimited;
@@ -120,7 +120,7 @@ public class CourseGetter {
         ArrayList<Course> newLimited = new ArrayList<>();
 
         for (Course c : currentCourses)
-            if (c.teacherLastName.contains(teacherLastName))
+            if (c.getTeacherLastName().contains(teacherLastName))
                 newLimited.add(c);
 
         currentCourses = newLimited;

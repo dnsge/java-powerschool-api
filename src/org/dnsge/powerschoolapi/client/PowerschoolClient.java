@@ -146,6 +146,9 @@ public class PowerschoolClient {
         return psInstallURL;
     }
 
+    /**
+     * @return A {@code String} formatted like {@code "PowerschoolClient ({psInstallURL})"}
+     */
     @Override
     public String toString() {
         return "PowerschoolClient (" + psInstallURL + ")";

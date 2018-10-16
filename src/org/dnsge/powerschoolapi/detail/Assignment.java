@@ -215,75 +215,131 @@ public class Assignment {
         }
     }
 
+    /**
+     * @return A {@code String} formatted like {@code "{Assignment Name} ({Score Percent})"}
+     */
     @Override
     public String toString() {
         return name + " (" + scorePercent + ")";
     }
 
+    /**
+     * @return {@code Assignment} name
+     */
     public String getName() {
         return name;
     }
 
+    /**
+     * @return {@code Assignment} ID
+     */
     public Integer getAssignmentId() {
         return assignmentId;
     }
 
+    /**
+     * @return Total points possible on the {@code Assignment}
+     */
     public Integer getTotalPoints() {
         return totalPoints;
     }
 
+    /**
+     * @return Points actually scored on the {@code Assignment}
+     */
     public Integer getScoredPoints() {
         return scoredPoints;
     }
 
+    /**
+     * @return Score on the {@code Assignment} as a percent out of 100
+     */
     public Float getScorePercent() {
         return scorePercent;
     }
 
+    /**
+     * @return Score on the {@code Assignment} as a letter grade
+     */
     public String getScoreLetterGrade() {
         return scoreLetterGrade;
     }
 
+    /**
+     * @return Due date of the {@code Assignment} in the format of {@code "yyyy-MM-dd"}
+     */
     public String getDueDateString() {
         return dueDateString;
     }
 
+    /**
+     * @return Date that the {@code Assignment} was graded in the format of {@code "yyyy-MM-dd"}
+     */
     public String getScoreEntryDateString() {
         return scoreEntryDateString;
     }
 
+    /**
+     * @return Does the {@code Assignment} have the "Collected" flag (NOT if it has been graded)
+     */
     public Boolean getCollected() {
         return isCollected;
     }
 
+    /**
+     * @return Does the {@code Assignment} have the "Late" flag
+     */
     public Boolean getLate() {
         return isLate;
     }
 
+    /**
+     * @return Does the {@code Assignment} have the "Missing" flag
+     */
     public Boolean getMissing() {
         return isMissing;
     }
 
+    /**
+     * @return Does the {@code Assignment} have the "Exempt" flag
+     */
     public Boolean getExempt() {
         return isExempt;
     }
 
+    /**
+     * @return Does the {@code Assignment} have the "Absent" flag
+     */
     public Boolean getAbsent() {
         return isAbsent;
     }
 
+    /**
+     * @return Does the {@code Assignment} have the "Incomplete" flag
+     */
     public Boolean getIncomplete() {
         return isIncomplete;
     }
 
+    /**
+     * @return Due date of the {@code Assignment}
+     * @see Date
+     */
     public Date getDueDate() {
         return dueDate;
     }
 
+    /**
+     * @return Date that the {@code Assignment} was graded
+     * @see Date
+     */
     public Date getScoreEntryDate() {
         return scoreEntryDate;
     }
 
+    /**
+     * @return Whether the {@code Assignment} is missing certain details (i.e. the {@code Assignment} hasn't been graded yet)
+     */
     public boolean isMissingDetails() {
         return isMissingDetails;
     }

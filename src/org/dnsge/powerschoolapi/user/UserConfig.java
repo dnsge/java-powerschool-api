@@ -38,29 +38,48 @@ public class UserConfig {
         this.authData = authData;
     }
 
+    /**
+     * @param user {@code User} that will own this {@code UserConfig}
+     * @see User
+     */
     public void setUser(User user) {
         this.user = user;
     }
 
+    /**
+     * @return {@code User} that owns this {@code UserConfig}
+     * @see User
+     */
     public User getUser() {
         return user;
     }
 
+    /**
+     * @return {@code UserConfig} stored username
+     */
     public String getUsername() {
         return username;
     }
 
     /**
-     * @return Authentication Cookies for this UserConfig
+     * @return Authentication Cookies for this {@code UserConfig}
      */
     public Map<String, String> getAuthData() {
         return authData;
     }
 
+    /**
+     * @return PowerschoolClient of this {@code UserConfig}
+     * @see PowerschoolClient
+     */
     public PowerschoolClient getClient() {
         return client;
     }
 
+    /**
+     * @return {@code Document} that was used to generate this {@code UserConfig}
+     * @see org.jsoup.nodes.Document
+     */
     public Document getConstructionDocument() {
         return constructionDocument;
     }
