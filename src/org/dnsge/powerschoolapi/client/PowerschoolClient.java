@@ -17,7 +17,7 @@ import java.util.Map;
  */
 public class PowerschoolClient {
 
-    private String psInstallURL;
+    private final String psInstallURL;
     private ClientStorage storage;
 
     /**

@@ -1,6 +1,7 @@
 package org.dnsge.powerschoolapi.detail;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Class for filtering / searching for courses in an ArrayList
@@ -129,7 +130,7 @@ public class CourseGetter {
      * @return New ArrayList Object with the results of the filtering
      */
     @SuppressWarnings("unchecked")
-    public ArrayList<Course> results() {
+    public List<Course> results() {
         return (ArrayList<Course>)currentCourses.clone();
     }
 

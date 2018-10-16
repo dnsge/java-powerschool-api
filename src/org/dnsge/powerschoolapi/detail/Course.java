@@ -14,6 +14,7 @@ import org.jsoup.nodes.Element;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -82,10 +83,10 @@ public class Course {
      */
     public static Course generateCourseFromElement(Element genElement, User user, ViewSpecification viewSpecification) {
         String courseFrequency = genElement.child(0).html().trim();
-        String courseName = "";
-        String teacherFirstName = "";
-        String teacherLastName = "";
-        String teacherEmail = "";
+        String courseName;
+        String teacherFirstName;
+        String teacherLastName;
+        String teacherEmail;
         String room = "";
 
         // Create the basic course with a reference to the ArrayList that will later be populated
@@ -155,7 +156,7 @@ public class Course {
      */
     public GradeGroup getGradeGroup(GradingPeriod gradingPeriod) {
         for (GradeGroup gg : courseGrades) {
-            if (gg.gradingPeriod == gradingPeriod)
+            if (gg.getGradingPeriod() == gradingPeriod)
                 return gg;
         }
         return null;
@@ -213,7 +214,7 @@ public class Course {
         return courseName + " - " + teacherLastName + " (" + courseGrades.toString() + ")";
     }
 
-    public ArrayList<GradeGroup> getCourseGrades() {
+    public List<GradeGroup> getCourseGrades() {
         return courseGrades;
     }
 

@@ -16,7 +16,7 @@ public class UserConfig {
     final PowerschoolClient client;
     final String username;
     final String password;
-    final Document constructionDocument;
+    private final Document constructionDocument;
     final Map<String, String> authData;
     User user;
 
@@ -58,5 +58,9 @@ public class UserConfig {
 
     public PowerschoolClient getClient() {
         return client;
+    }
+
+    public Document getConstructionDocument() {
+        return constructionDocument;
     }
 }

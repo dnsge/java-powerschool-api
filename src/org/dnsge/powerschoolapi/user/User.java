@@ -9,6 +9,7 @@ import org.jsoup.nodes.Element;
 import org.jsoup.nodes.Node;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -18,8 +19,8 @@ import java.util.Map;
  */
 public class User {
 
-    final ArrayList<Course> courses;
-    final String personName;
+    private final ArrayList<Course> courses;
+    private final String personName;
     final UserConfig config;
     final String username;
 
@@ -35,7 +36,7 @@ public class User {
         config.setUser(this);
         this.courses = new ArrayList<>();
 
-        Document doc = this.config.constructionDocument;
+        Document doc = this.config.getConstructionDocument();
 
         Node usernameContainer = doc.getElementById("userName").child(0).childNode(0);
         personName = usernameContainer.toString().trim();
@@ -90,5 +91,13 @@ public class User {
 
     public PowerschoolClient getClient() {
         return config.client;
+    }
+
+    public List<Course> getCourses() {
+        return courses;
+    }
+
+    public String getPersonName() {
+        return personName;
     }
 }

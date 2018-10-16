@@ -60,9 +60,11 @@ public enum GradingPeriod {
         return Unknown;
     }
 
+    /**
+     * @return String representation of the {@code GradingPeriod}, returns "??" if {@code GradingPeriod.Unknown}
+     */
     @Override
     public String toString() {
-        // Get the String representation, return ?? if Unknown
         if (this == Unknown)
             return "??";
         return super.toString();

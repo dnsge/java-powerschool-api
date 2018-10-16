@@ -17,24 +17,24 @@ import java.util.Date;
  */
 public class Assignment {
 
-    public final String name;
-    public final Integer assignmentId;
-    public final Integer totalPoints;
-    public final Integer scoredPoints;
-    public final Float scorePercent;
-    public final String scoreLetterGrade;
-    public final String dueDateString;
-    public final String scoreEntryDateString;
-    public final Boolean isCollected;
-    public final Boolean isLate;
-    public final Boolean isMissing;
-    public final Boolean isExempt;
-    public final Boolean isAbsent;
-    public final Boolean isIncomplete;
-    public final Date dueDate;
-    public final Date scoreEntryDate;
+    private final String name;
+    private final Integer assignmentId;
+    private final Integer totalPoints;
+    private final Integer scoredPoints;
+    private final Float scorePercent;
+    private final String scoreLetterGrade;
+    private final String dueDateString;
+    private final String scoreEntryDateString;
+    private final Boolean isCollected;
+    private final Boolean isLate;
+    private final Boolean isMissing;
+    private final Boolean isExempt;
+    private final Boolean isAbsent;
+    private final Boolean isIncomplete;
+    private final Date dueDate;
+    private final Date scoreEntryDate;
 
-    public final boolean isMissingDetails;
+    private final boolean isMissingDetails;
 
     /**
      * Basic constructor for an Assignment
@@ -217,5 +217,73 @@ public class Assignment {
     @Override
     public String toString() {
         return name + " (" + scorePercent + ")";
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public Integer getAssignmentId() {
+        return assignmentId;
+    }
+
+    public Integer getTotalPoints() {
+        return totalPoints;
+    }
+
+    public Integer getScoredPoints() {
+        return scoredPoints;
+    }
+
+    public Float getScorePercent() {
+        return scorePercent;
+    }
+
+    public String getScoreLetterGrade() {
+        return scoreLetterGrade;
+    }
+
+    public String getDueDateString() {
+        return dueDateString;
+    }
+
+    public String getScoreEntryDateString() {
+        return scoreEntryDateString;
+    }
+
+    public Boolean getCollected() {
+        return isCollected;
+    }
+
+    public Boolean getLate() {
+        return isLate;
+    }
+
+    public Boolean getMissing() {
+        return isMissing;
+    }
+
+    public Boolean getExempt() {
+        return isExempt;
+    }
+
+    public Boolean getAbsent() {
+        return isAbsent;
+    }
+
+    public Boolean getIncomplete() {
+        return isIncomplete;
+    }
+
+    public Date getDueDate() {
+        return dueDate;
+    }
+
+    public Date getScoreEntryDate() {
+        return scoreEntryDate;
+    }
+
+    public boolean isMissingDetails() {
+        return isMissingDetails;
     }
 }

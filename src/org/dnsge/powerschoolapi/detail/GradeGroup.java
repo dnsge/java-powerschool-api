@@ -16,12 +16,12 @@ import java.util.regex.Pattern;
  */
 public class GradeGroup {
 
-    final Course myCourse;
-    final String letterGrade;
-    final float numberGrade;
-    final GradingPeriod gradingPeriod;
-    final String gradingPeriodName;
-    final String hrefAttrib;
+    private final Course myCourse;
+    private final String letterGrade;
+    private final float numberGrade;
+    private final GradingPeriod gradingPeriod;
+    private final String gradingPeriodName;
+    private final String hrefAttrib;
     private boolean isEmpty;
 
     private static final Pattern urlMatcherPattern =
@@ -120,5 +120,29 @@ public class GradeGroup {
 
     public void setEmpty(boolean empty) {
         isEmpty = empty;
+    }
+
+    public Course getMyCourse() {
+        return myCourse;
+    }
+
+    public String getLetterGrade() {
+        return letterGrade;
+    }
+
+    public float getNumberGrade() {
+        return numberGrade;
+    }
+
+    public GradingPeriod getGradingPeriod() {
+        return gradingPeriod;
+    }
+
+    public String getGradingPeriodName() {
+        return gradingPeriodName;
+    }
+
+    public String getHrefAttrib() {
+        return hrefAttrib;
     }
 }
