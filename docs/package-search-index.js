@@ -1,0 +1,1 @@
+packageSearchIndex = [{"l":"org.dnsge.powerschoolapi.client"},{"l":"org.dnsge.powerschoolapi.detail"},{"l":"org.dnsge.powerschoolapi.user"},{"l":"org.dnsge.powerschoolapi.util"}]
