@@ -75,7 +75,8 @@ public class Assignment {
      * @param isMissingDetails Whether the assignment is not fully generated/populated
      */
     private Assignment(String name, Integer assignmentId, Integer totalPoints, Integer scoredPoints, Float scorePercent,
-                      String scoreLetterGrade, String[] dates, Boolean[] flags, boolean isMissingDetails) {Date dueDate1;
+                      String scoreLetterGrade, String[] dates, Boolean[] flags, boolean isMissingDetails) {
+        Date dueDate1;
         Date scoreEntryDate1;
         this.name = name;
         this.assignmentId = assignmentId;

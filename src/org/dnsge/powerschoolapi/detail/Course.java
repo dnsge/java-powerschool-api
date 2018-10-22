@@ -190,7 +190,7 @@ public class Course {
      * Gets all assignments for this Course
      *
      * @param gradingPeriod {@code GradingPeriod} which to get the assignments from
-     * @return ArrayList of assignments found
+     * @return {@code List} of assignments found
      * @see Assignment
      */
     public List<Assignment> getAssignments(GradingPeriod gradingPeriod) {
