@@ -47,6 +47,7 @@ public class Assignment {
     private final Integer totalPoints;
     private final Integer scoredPoints;
     private final Float scorePercent;
+    private final String category;
     private final String scoreLetterGrade;
     private final String dueDateString;
     private final String scoreEntryDateString;
@@ -75,7 +76,7 @@ public class Assignment {
      * @param isMissingDetails Whether the assignment is not fully generated/populated
      */
     private Assignment(String name, Integer assignmentId, Integer totalPoints, Integer scoredPoints, Float scorePercent,
-                      String scoreLetterGrade, String[] dates, Boolean[] flags, boolean isMissingDetails) {
+                      String scoreLetterGrade, String category, String[] dates, Boolean[] flags, boolean isMissingDetails) {
         Date dueDate1;
         Date scoreEntryDate1;
         this.name = name;
@@ -84,6 +85,7 @@ public class Assignment {
         this.scoredPoints = scoredPoints;
         this.scorePercent = scorePercent;
         this.scoreLetterGrade = scoreLetterGrade;
+        this.category = category;
         this.dueDateString = dates[0];
         this.scoreEntryDateString = dates[1];
         this.isCollected = flags[0];
@@ -125,8 +127,8 @@ public class Assignment {
      * @param totalPoints Total points possible
      * @param dueDateString Due date as String
      */
-    private Assignment(String name, Integer assignmentId, Integer totalPoints, String dueDateString) {
-        this(name, assignmentId, totalPoints, null, null, null,
+    private Assignment(String name, Integer assignmentId, Integer totalPoints, String dueDateString, String category) {
+        this(name, assignmentId, totalPoints, null, null, null, category,
                 new String[]{dueDateString, null}, new Boolean[]{null, null, null, null, null, null}, true);
     }
 
@@ -206,10 +208,19 @@ public class Assignment {
 
             JSONObject assignmentSections = assignmentJSON.getJSONArray("_assignmentsections").getJSONObject(0);
             JSONArray assignmentScoresArray = assignmentSections.getJSONArray("_assignmentscores");
+            JSONArray assignmentCategoryAssociations = assignmentSections.getJSONArray("_assignmentcategoryassociations");
 
             String name = getStringOrNull(assignmentSections,"name");
             String dueDate = getStringOrNull(assignmentSections,"duedate");
             Integer totalPoints = getIntOrNull(assignmentSections, "totalpointvalue");
+
+            String category;
+            try {
+                category = assignmentCategoryAssociations.getJSONObject(0)
+                        .getJSONObject("_teachercategory").getString("name");
+            } catch (JSONException i) {
+                category = null;
+            }
 
             if (!assignmentScoresArray.isEmpty()) {
                 JSONObject assignmentScores = assignmentScoresArray.getJSONObject(0);
@@ -226,12 +237,12 @@ public class Assignment {
                 Boolean isAbsent = getBooleanOrNull(assignmentScores, "isabsent");
                 Boolean isIncomplete = getBooleanOrNull(assignmentScores, "isincomplete");
 
-                return new Assignment(name, assignmentId, totalPoints, scoredPoints, scorePercent, scoreLetterGrade,
+                return new Assignment(name, assignmentId, totalPoints, scoredPoints, scorePercent, scoreLetterGrade, category,
                         new String[]{dueDate, scoreEntryDate},
                         new Boolean[]{isCollected, isLate, isMissing, isExempt, isAbsent, isIncomplete}, false
                 );
             } else {
-                return new Assignment(name, assignmentId, totalPoints, dueDate);
+                return new Assignment(name, assignmentId, totalPoints, dueDate, category);
             }
 
         } catch (JSONException e) {
@@ -288,6 +299,13 @@ public class Assignment {
      */
     public String getScoreLetterGrade() {
         return scoreLetterGrade;
+    }
+
+    /**
+     * @return Teacher-defined category of the {@code Assignment}
+     */
+    public String getCategory() {
+        return category;
     }
 
     /**
