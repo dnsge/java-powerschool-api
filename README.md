@@ -20,7 +20,7 @@ for (Assignment a : mathCourse.getAssignments(GradingPeriod.F1)) {
   
 }
 ```
-### [Download Latest Version](https://github.com/dnsge/java-powerschool-api/latest)
+### [Download Latest Version](https://github.com/dnsge/java-powerschool-api/releases/latest)
 
 #### Note
 The requests aren't using an actual API, but rather parsing HTML from a webpage retrieved. Results could might vary, but shouldn't if your Powerschool System is a typical install.
