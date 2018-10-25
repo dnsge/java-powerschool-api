@@ -38,7 +38,7 @@ import java.util.Date;
  * Exposes many fields with information about the assignment
  *
  * @author Daniel Sage
- * @version 0.1
+ * @version 0.2
  */
 public class Assignment {
 
@@ -51,15 +51,10 @@ public class Assignment {
     private final String scoreLetterGrade;
     private final String dueDateString;
     private final String scoreEntryDateString;
-    private final Boolean isCollected;
-    private final Boolean isLate;
-    private final Boolean isMissing;
-    private final Boolean isExempt;
-    private final Boolean isAbsent;
-    private final Boolean isIncomplete;
     private final Date dueDate;
     private final Date scoreEntryDate;
 
+    private final AssignmentFlagContainer flagContainer;
     private final boolean isMissingDetails;
 
     /**
@@ -71,12 +66,14 @@ public class Assignment {
      * @param scoredPoints Scored points
      * @param scorePercent Percentage grade
      * @param scoreLetterGrade Letter Grade
-     * @param dates Array of Dates, dates[0] is the due date String, dates[1] is the entry date String
-     * @param flags Array of booleans, in the order of: isCollected, isLate, isMissing, isExempt, isAbsent, isIncomplete
+     * @param dueDateString Due date String
+     * @param scoreEntryDateString entry date String
+     * @param flagContainer {@code AssignmentFlagContainer} object holding the status flags
      * @param isMissingDetails Whether the assignment is not fully generated/populated
      */
     private Assignment(String name, Integer assignmentId, Integer totalPoints, Integer scoredPoints, Float scorePercent,
-                      String scoreLetterGrade, String category, String[] dates, Boolean[] flags, boolean isMissingDetails) {
+                       String scoreLetterGrade, String category, String dueDateString, String scoreEntryDateString,
+                       AssignmentFlagContainer flagContainer, boolean isMissingDetails) {
         Date dueDate1;
         Date scoreEntryDate1;
         this.name = name;
@@ -86,14 +83,9 @@ public class Assignment {
         this.scorePercent = scorePercent;
         this.scoreLetterGrade = scoreLetterGrade;
         this.category = category;
-        this.dueDateString = dates[0];
-        this.scoreEntryDateString = dates[1];
-        this.isCollected = flags[0];
-        this.isLate = flags[1];
-        this.isMissing = flags[2];
-        this.isExempt = flags[3];
-        this.isAbsent = flags[4];
-        this.isIncomplete = flags[5];
+        this.dueDateString = dueDateString;
+        this.scoreEntryDateString = scoreEntryDateString;
+        this.flagContainer = flagContainer;
         this.isMissingDetails = isMissingDetails;
 
         if (dueDateString != null) {
@@ -129,7 +121,7 @@ public class Assignment {
      */
     private Assignment(String name, Integer assignmentId, Integer totalPoints, String dueDateString, String category) {
         this(name, assignmentId, totalPoints, null, null, null, category,
-                new String[]{dueDateString, null}, new Boolean[]{null, null, null, null, null, null}, true);
+                dueDateString, null, AssignmentFlagContainer.empty(), true);
     }
 
     /**
@@ -237,9 +229,10 @@ public class Assignment {
                 Boolean isAbsent = getBooleanOrNull(assignmentScores, "isabsent");
                 Boolean isIncomplete = getBooleanOrNull(assignmentScores, "isincomplete");
 
-                return new Assignment(name, assignmentId, totalPoints, scoredPoints, scorePercent, scoreLetterGrade, category,
-                        new String[]{dueDate, scoreEntryDate},
-                        new Boolean[]{isCollected, isLate, isMissing, isExempt, isAbsent, isIncomplete}, false
+                return new Assignment(name, assignmentId, totalPoints, scoredPoints, scorePercent, scoreLetterGrade,
+                        category, dueDate, scoreEntryDate,
+                        new AssignmentFlagContainer(isCollected, isLate, isMissing, isExempt, isAbsent, isIncomplete),
+                        false
                 );
             } else {
                 return new Assignment(name, assignmentId, totalPoints, dueDate, category);
@@ -325,43 +318,43 @@ public class Assignment {
     /**
      * @return Does the {@code Assignment} have the "Collected" flag (NOT if it has been graded)
      */
-    public Boolean getCollected() {
-        return isCollected;
+    public Boolean isCollected() {
+        return getFlagContainer().isCollected();
     }
 
     /**
      * @return Does the {@code Assignment} have the "Late" flag
      */
-    public Boolean getLate() {
-        return isLate;
+    public Boolean isLate() {
+        return getFlagContainer().isLate();
     }
 
     /**
      * @return Does the {@code Assignment} have the "Missing" flag
      */
-    public Boolean getMissing() {
-        return isMissing;
+    public Boolean isMissing() {
+        return getFlagContainer().isMissing();
     }
 
     /**
      * @return Does the {@code Assignment} have the "Exempt" flag
      */
-    public Boolean getExempt() {
-        return isExempt;
+    public Boolean isExempt() {
+        return getFlagContainer().isExempt();
     }
 
     /**
      * @return Does the {@code Assignment} have the "Absent" flag
      */
-    public Boolean getAbsent() {
-        return isAbsent;
+    public Boolean isAbsent() {
+        return getFlagContainer().isAbsent();
     }
 
     /**
      * @return Does the {@code Assignment} have the "Incomplete" flag
      */
-    public Boolean getIncomplete() {
-        return isIncomplete;
+    public Boolean isIncomplete() {
+        return getFlagContainer().isIncomplete();
     }
 
     /**
@@ -385,5 +378,12 @@ public class Assignment {
      */
     public boolean isMissingDetails() {
         return isMissingDetails;
+    }
+
+    /**
+     * @return {@code AssignmentFlagContainer} object with this {@code Assignment's} flags
+     */
+    public AssignmentFlagContainer getFlagContainer() {
+        return flagContainer;
     }
 }
