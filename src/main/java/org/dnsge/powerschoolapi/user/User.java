@@ -24,9 +24,11 @@
 
 package org.dnsge.powerschoolapi.user;
 
+import org.dnsge.powerschoolapi.client.DefaultPowerschoolClient;
 import org.dnsge.powerschoolapi.client.PowerschoolClient;
 import org.dnsge.powerschoolapi.detail.Course;
 import org.dnsge.powerschoolapi.detail.CourseGetter;
+import org.dnsge.powerschoolapi.util.DocumentFetcher;
 import org.dnsge.powerschoolapi.util.ViewSpecification;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -40,7 +42,7 @@ import java.util.Map;
  * Class that represents a logged in Powerschool user
  *
  * @author Daniel Sage
- * @version 0.1
+ * @version 1.0
  */
 public class User {
 
@@ -87,16 +89,14 @@ public class User {
     }
 
     /**
-     * Asks own {@code PowerschoolClient} to preform a GET reqeust with
-     * its own authentication data
+     * Returns a {@link DocumentFetcher} that will perform requests with this User's authentication headers
      *
-     * @param url Partial url to GET
      * @return Document from GET request
-     * @see PowerschoolClient
+     * @see DefaultPowerschoolClient#getAs(User, String)
      */
-    public Document getAsSelf(String url) {
+    public DocumentFetcher documentFetcher() {
         // GET request as this user with its auth
-        return config.client.getAs(this, url);
+        return url -> config.client.getAs(this, url);
     }
 
     /**
@@ -123,7 +123,7 @@ public class User {
 
     /**
      * @return {@code User} {@code PowerschoolClient}
-     * @see PowerschoolClient
+     * @see DefaultPowerschoolClient
      */
     public PowerschoolClient getClient() {
         return config.client;

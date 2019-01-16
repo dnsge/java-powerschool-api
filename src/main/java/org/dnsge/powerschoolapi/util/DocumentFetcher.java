@@ -24,49 +24,22 @@
 
 package org.dnsge.powerschoolapi.util;
 
+import org.jsoup.nodes.Document;
+
 /**
- * Simple class to hold a pair of objects
- * <p>
- * See <a href="https://stackoverflow.com/a/4777636/5483423">this</a> for original
+ * Provides implementations for getting a URL
  *
- * @param <L> Type of Left Object
- * @param <R> Type of Right Object
+ * @author Daniel Sage
  * @version 1.0
  */
-public class Pair<L, R> {
-    private L l;
-    private R r;
-
-    public Pair(L l, R r) {
-        this.l = l;
-        this.r = r;
-    }
+public interface DocumentFetcher {
 
     /**
-     * @return Left object in this {@code Pair}
+     * Returns a Document from a HTTP GET request
+     *
+     * @param url String URL to get
+     * @return {@link org.jsoup.nodes.Document} object representing the Document
      */
-    public L getL() {
-        return l;
-    }
+    Document get(String url);
 
-    /**
-     * @return Right object in this {@code Pair}
-     */
-    public R getR() {
-        return r;
-    }
-
-    /**
-     * @param l New left object
-     */
-    public void setL(L l) {
-        this.l = l;
-    }
-
-    /**
-     * @param r New right object
-     */
-    public void setR(R r) {
-        this.r = r;
-    }
 }

@@ -28,7 +28,7 @@ package org.dnsge.powerschoolapi.client;
  * RuntimeException that occurs if there is an issue logging in
  *
  * @author Daniel Sage
- * @version 0.1
+ * @version 1.0
  */
 public class PowerschoolLoginException extends RuntimeException {
 

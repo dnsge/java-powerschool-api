@@ -46,12 +46,12 @@ import java.util.regex.Pattern;
  * Object that represents a Course in Powerschool
  *
  * @author Daniel Sage
- * @version 0.1
+ * @version 1.0
  */
 public class Course {
 
     private static final Pattern teacherNamePattern =
-            Pattern.compile("^Details about (.*?), (.*?)$",Pattern.MULTILINE | Pattern.CASE_INSENSITIVE);
+            Pattern.compile("^Details about (.*?), (.*?)$", Pattern.MULTILINE | Pattern.CASE_INSENSITIVE);
 
     private String courseName;
     private String courseFrequency;
@@ -65,14 +65,14 @@ public class Course {
     /**
      * Basic constructor for a Course
      *
-     * @param courseName Name of the Course
-     * @param courseFrequency Frequency 'code' of the Course
+     * @param courseName       Name of the Course
+     * @param courseFrequency  Frequency 'code' of the Course
      * @param teacherFirstName Teacher's first name
-     * @param teacherLastName Teacher's last name
-     * @param teacherEmail Teacher's email
-     * @param room Course's room number
-     * @param courseGrades List of course's grades
-     * @param user User which the Course belongs to
+     * @param teacherLastName  Teacher's last name
+     * @param teacherEmail     Teacher's email
+     * @param room             Course's room number
+     * @param courseGrades     List of course's grades
+     * @param user             User which the Course belongs to
      */
     public Course(String courseName, String courseFrequency, String teacherFirstName, String teacherLastName,
                   String teacherEmail, String room, List<GradeGroup> courseGrades, User user) {
@@ -90,7 +90,7 @@ public class Course {
      * Constructor for a Course with incomplete information
      *
      * @param courseGrades List of grades
-     * @param user User which the Course belongs to
+     * @param user         User which the Course belongs to
      */
     public Course(List<GradeGroup> courseGrades, User user) {
         this.courseGrades = courseGrades;
@@ -100,8 +100,8 @@ public class Course {
     /**
      * Generates a new {@code Course} from a {@code <tr>} HTML element
      *
-     * @param genElement {@code <tr>} element to construct a class from
-     * @param user User that the new course belongs to
+     * @param genElement        {@code <tr>} element to construct a class from
+     * @param user              User that the new course belongs to
      * @param viewSpecification {@code ViewSpecification} that should be used to make the Course
      * @return The new course
      */
@@ -133,7 +133,8 @@ public class Course {
         teacherEmail = courseDescriptorElement.childNode(4).attr("href").substring(7);
         try {
             room = courseDescriptorElement.childNode(5).toString().replace("&nbsp;", "").substring(5);
-        } catch (IndexOutOfBoundsException ignored){}
+        } catch (IndexOutOfBoundsException ignored) {
+        }
 
         Matcher teacherMatcher = teacherNamePattern.matcher(teacherDesc);
         teacherMatcher.matches();
@@ -155,7 +156,8 @@ public class Course {
             } else {
                 String letterGrade = gradeElement.childNode(0).toString();
                 float numberGrade = Float.parseFloat(gradeElement.childNode(2).toString());
-                courseGrades.add(new GradeGroup(returnCourse, letterGrade, numberGrade, gradeElementPair.getR(), gradeElement.attr("href")));
+                courseGrades.add(new GradeGroup(returnCourse.getUser().documentFetcher(), letterGrade, numberGrade,
+                        gradeElementPair.getR(), gradeElement.attr("href")));
             }
         }
 
@@ -217,7 +219,7 @@ public class Course {
             ArrayList<Assignment> rList = new ArrayList<>();
             // Populate the return list with new Assignments
             (new JSONArray(assignmentResponse.body())).forEach(
-                    jsonObject -> rList.add(Assignment.generateFromJsonObject((JSONObject)jsonObject))
+                    jsonObject -> rList.add(Assignment.generateFromJsonObject((JSONObject) jsonObject))
             );
 
             return rList;

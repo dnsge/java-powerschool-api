@@ -33,7 +33,7 @@ import java.util.HashMap;
  * Enum class that refers to the Column that an Element is in
  *
  * @author Daniel Sage
- * @version 0.1
+ * @version 1.0
  */
 public enum ColumnMode {
     EXP,

@@ -32,7 +32,7 @@ import java.util.ArrayList;
  * Class that represents a specific specification of Column Layouts on a powerschool homepage
  *
  * @author Daniel Sage
- * @version 0.1
+ * @version 1.0
  */
 public class ViewSpecification {
 

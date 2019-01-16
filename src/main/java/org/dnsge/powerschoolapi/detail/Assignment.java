@@ -24,6 +24,7 @@
 
 package org.dnsge.powerschoolapi.detail;
 
+import org.dnsge.powerschoolapi.client.DefaultPowerschoolClient;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -38,7 +39,7 @@ import java.util.Date;
  * Exposes many fields with information about the assignment
  *
  * @author Daniel Sage
- * @version 0.2
+ * @version 1.0
  */
 public class Assignment {
 
@@ -190,7 +191,7 @@ public class Assignment {
      * @param assignmentJSON JSONObject to use to construct the Assignment
      * @return New Assignment object from JSONObject
      * @see JSONObject
-     * @see org.dnsge.powerschoolapi.client.PowerschoolClient
+     * @see DefaultPowerschoolClient
      * @see Course
      */
     static Assignment generateFromJsonObject(JSONObject assignmentJSON) {

@@ -33,10 +33,11 @@ import java.util.HashMap;
  * Cookie / User information storage object for {@code PowerschoolClient}
  *
  * @author Daniel Sage
- * @version 0.1
- * @see PowerschoolClient
+ * @version 1.0
+ * @see DefaultPowerschoolClient
  */
-public class ClientStorage {
+public final class ClientStorage {
+
     private final HashMap<String, UserConfig> storage;
 
     ClientStorage() {
@@ -75,4 +76,5 @@ public class ClientStorage {
     UserConfig get(User user) {
         return storage.getOrDefault(user.getUsername(), null);
     }
+
 }

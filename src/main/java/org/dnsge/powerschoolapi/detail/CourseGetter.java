@@ -24,8 +24,8 @@
 
 package org.dnsge.powerschoolapi.detail;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Class for filtering / searching for courses in an ArrayList
@@ -34,10 +34,10 @@ import java.util.List;
  * Allows the use of method chaining
  *
  * @author Daniel Sage
- * @version 0.1
+ * @version 1.0
  */
 public class CourseGetter {
-    private ArrayList<Course> currentCourses;
+    private List<Course> currentCourses;
 
     /**
      * Creates the CourseGetter with a preliminary list of Courses
@@ -45,8 +45,8 @@ public class CourseGetter {
      * @param courses ArrayList to search through
      */
     @SuppressWarnings("unchecked")
-    public CourseGetter(ArrayList<Course> courses) {
-        this.currentCourses = (ArrayList<Course>)courses.clone();
+    public CourseGetter(List<Course> courses) {
+        this.currentCourses = List.copyOf(courses);
     }
 
     /**
@@ -56,13 +56,7 @@ public class CourseGetter {
      * @return this CourseGetter with updated information
      */
     public CourseGetter limitByName(String name) {
-        ArrayList<Course> newLimited = new ArrayList<>();
-
-        for (Course c : currentCourses)
-            if (c.getCourseName().equals(name))
-                newLimited.add(c);
-
-        currentCourses = newLimited;
+        currentCourses = currentCourses.stream().filter(c -> c.getCourseName().equals(name)).collect(Collectors.toList());
         return this;
     }
 
@@ -73,13 +67,7 @@ public class CourseGetter {
      * @return this CourseGetter with updated information
      */
     public CourseGetter containsByName(String name) {
-        ArrayList<Course> newLimited = new ArrayList<>();
-
-        for (Course c : currentCourses)
-            if (c.getCourseName().contains(name))
-                newLimited.add(c);
-
-        currentCourses = newLimited;
+        currentCourses = currentCourses.stream().filter(c -> c.getCourseName().contains(name)).collect(Collectors.toList());
         return this;
     }
 
@@ -90,13 +78,7 @@ public class CourseGetter {
      * @return this CourseGetter with updated information
      */
     public CourseGetter limitByFrequency(String courseFrequency) {
-        ArrayList<Course> newLimited = new ArrayList<>();
-
-        for (Course c : currentCourses)
-            if (c.getCourseFrequency().equals(courseFrequency))
-                newLimited.add(c);
-
-        currentCourses = newLimited;
+        currentCourses = currentCourses.stream().filter(c -> c.getCourseFrequency().equals(courseFrequency)).collect(Collectors.toList());
         return this;
     }
 
@@ -107,13 +89,8 @@ public class CourseGetter {
      * @return this CourseGetter with updated information
      */
     public CourseGetter containsByFrequency(String courseFrequency) {
-        ArrayList<Course> newLimited = new ArrayList<>();
+        currentCourses = currentCourses.stream().filter(c -> c.getCourseFrequency().contains(courseFrequency)).collect(Collectors.toList());
 
-        for (Course c : currentCourses)
-            if (c.getCourseFrequency().contains(courseFrequency))
-                newLimited.add(c);
-
-        currentCourses = newLimited;
         return this;
     }
 
@@ -124,13 +101,7 @@ public class CourseGetter {
      * @return this CourseGetter with updated information
      */
     public CourseGetter limitByTeacherLastName(String teacherLastName) {
-        ArrayList<Course> newLimited = new ArrayList<>();
-
-        for (Course c : currentCourses)
-            if (c.getTeacherLastName().equals(teacherLastName))
-                newLimited.add(c);
-
-        currentCourses = newLimited;
+        currentCourses = currentCourses.stream().filter(c -> c.getTeacherLastName().equals(teacherLastName)).collect(Collectors.toList());
         return this;
     }
 
@@ -141,13 +112,7 @@ public class CourseGetter {
      * @return this CourseGetter with updated information
      */
     public CourseGetter containsByTeacherLastName(String teacherLastName) {
-        ArrayList<Course> newLimited = new ArrayList<>();
-
-        for (Course c : currentCourses)
-            if (c.getTeacherLastName().contains(teacherLastName))
-                newLimited.add(c);
-
-        currentCourses = newLimited;
+        currentCourses = currentCourses.stream().filter(c -> c.getTeacherLastName().contains(teacherLastName)).collect(Collectors.toList());
         return this;
     }
 
@@ -156,7 +121,16 @@ public class CourseGetter {
      */
     @SuppressWarnings("unchecked")
     public List<Course> results() {
-        return (ArrayList<Course>)currentCourses.clone();
+        return List.copyOf(currentCourses);
+    }
+
+    /**
+     * Returns the number of results.
+     *
+     * @return the number of results
+     */
+    public int size() {
+        return results().size();
     }
 
     /**

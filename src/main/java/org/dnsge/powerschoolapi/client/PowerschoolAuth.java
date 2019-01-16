@@ -38,7 +38,7 @@ import java.util.Formatter;
  * @author Daniel Sage
  * @version 1.0
  */
-public class PowerschoolAuth {
+final class PowerschoolAuth {
 
     /**
      * Returns a hex String from a byte[]
@@ -60,7 +60,7 @@ public class PowerschoolAuth {
      * Calculates a HMAC MD5 from data and a key
      *
      * @param data Data to hash
-     * @param key Key to use
+     * @param key  Key to use
      * @return Hashed data
      */
     private static String hmacMD5(String data, String key) {
@@ -80,7 +80,7 @@ public class PowerschoolAuth {
      * Creates the {@code dbpw} field needed for submitting a Powerschool login request
      *
      * @param contextData ContextData from a hidden form value
-     * @param password Password of user
+     * @param password    Password of user
      * @return Desired dbpw value
      */
     public static String getDBPWField(String contextData, String password) {
@@ -91,7 +91,7 @@ public class PowerschoolAuth {
      * Creates the {@code pw} field (different from the raw password) needed for submitting a Powerschool login request
      *
      * @param contextData ContextData from a hidden form value
-     * @param password Password of user
+     * @param password    Password of user
      * @return Desired pw value
      */
     public static String getPWField(String contextData, String password) {

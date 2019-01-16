@@ -28,7 +28,7 @@ package org.dnsge.powerschoolapi.detail;
  * Class that holds information about an {@code Assignment's} flags
  *
  * @author Daniel Sage
- * @version 0.2
+ * @version 1.0
  * @see Assignment
  */
 public class AssignmentFlagContainer {

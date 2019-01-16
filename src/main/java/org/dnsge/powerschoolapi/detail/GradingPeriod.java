@@ -30,7 +30,7 @@ import org.dnsge.powerschoolapi.util.ColumnMode;
  * Enum that represents a specific GradingPeriod for a GradeGroup
  *
  * @author Daniel Sage
- * @version 0.1
+ * @version 1.0
  */
 public enum GradingPeriod {
     Q1,

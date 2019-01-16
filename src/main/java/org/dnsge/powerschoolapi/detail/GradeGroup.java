@@ -25,6 +25,7 @@
 package org.dnsge.powerschoolapi.detail;
 
 import org.dnsge.powerschoolapi.util.ColumnMode;
+import org.dnsge.powerschoolapi.util.DocumentFetcher;
 import org.json.JSONObject;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -37,11 +38,12 @@ import java.util.regex.Pattern;
  * Class that represents a group of grades
  *
  * @author Daniel Sage
- * @version 0.1
+ * @version 1.0
  */
 public class GradeGroup {
 
-    private final Course myCourse;
+    private final DocumentFetcher documentFetcher;
+
     private final String letterGrade;
     private final float numberGrade;
     private final GradingPeriod gradingPeriod;
@@ -56,15 +58,15 @@ public class GradeGroup {
     /**
      * General constructor
      *
-     * @param myCourse {@code Course} that this GradeGroup belongs to
-     * @param letterGrade Grade as a letter for GradeGroup
-     * @param numberGrade Grade as a number for GradeGroup
-     * @param gradingPeriod Period of Grading (Whole year, quarter 1, ect)
-     * @param hrefAttrib Partial URL that contains a link to the page for the assignments within this specific GradeGroup
+     * @param documentFetcher {@link DocumentFetcher} to use for getting detailed assignments
+     * @param letterGrade     Grade as a letter for GradeGroup
+     * @param numberGrade     Grade as a number for GradeGroup
+     * @param gradingPeriod   Period of Grading (Whole year, quarter 1, ect)
+     * @param hrefAttrib      Partial URL that contains a link to the page for the assignments within this specific GradeGroup
      */
-    public GradeGroup(Course myCourse, String letterGrade, float numberGrade, ColumnMode gradingPeriod, String hrefAttrib) {
+    public GradeGroup(DocumentFetcher documentFetcher, String letterGrade, float numberGrade, ColumnMode gradingPeriod, String hrefAttrib) {
 
-        this.myCourse = myCourse;
+        this.documentFetcher = documentFetcher;
         this.letterGrade = letterGrade;
         this.numberGrade = numberGrade;
         this.hrefAttrib = "guardian/" + hrefAttrib;
@@ -75,6 +77,10 @@ public class GradeGroup {
         this.isEmpty = false;
         this.isUnused = false;
 
+    }
+
+    public GradeGroup(DocumentFetcher documentFetcher, ColumnMode gradingPeriod) {
+        this(documentFetcher, "", 0f, gradingPeriod, null);
     }
 
     /**
@@ -109,7 +115,7 @@ public class GradeGroup {
         String formattedBegDate = begYear + "-" + begMonth + "-" + begDay;
         String formattedEndDate = endYear + "-" + endMonth + "-" + endDay;
 
-        Document dd = myCourse.getUser().getAsSelf(hrefAttrib);
+        Document dd = documentFetcher.get(hrefAttrib);
         Element target = dd.getElementById("content-main").child(2).child(6).child(0);
         String sectionId = target.attr("data-sectionid");
 
@@ -124,20 +130,27 @@ public class GradeGroup {
     /**
      * Creates a new GradeGroup that is 'empty'
      *
-     * @param myCourse {@code Course} that the GradeGroup belongs to
+     * @param myCourse      {@code Course} that the GradeGroup belongs to
      * @param gradingPeriod Period of Grading (Whole year, quarter 1, ect)
      * @return new GradeGroup object with the desired attributes
      */
     public static GradeGroup noGrade(Course myCourse, ColumnMode gradingPeriod) {
         // An empty GradeGroup ( [ i ] ) bound to a course and grading period
-        GradeGroup temp = new GradeGroup(myCourse, "", 0f, gradingPeriod, null);
+        GradeGroup temp = new GradeGroup(myCourse.getUser().documentFetcher(), gradingPeriod);
         temp.setEmpty(true);
         return temp;
     }
 
+    /**
+     * Creates a new GradeGroup that is 'empty' and 'unused'
+     *
+     * @param myCourse      {@code Course} that the GradeGroup belongs to
+     * @param gradingPeriod Period of Grading (Whole year, quarter 1, ect)
+     * @return new GradeGroup object with the desired attributes
+     */
     public static GradeGroup emptyGrade(Course myCourse, ColumnMode gradingPeriod) {
         // An empty GradeGroup ( not even a [ i ] ) bound to a course and grading period
-        GradeGroup temp = new GradeGroup(myCourse, "", 0f, gradingPeriod, null);
+        GradeGroup temp = new GradeGroup(myCourse.getUser().documentFetcher(), gradingPeriod);
         temp.setEmpty(true);
         temp.setUnused(true);
         return temp;
@@ -167,14 +180,6 @@ public class GradeGroup {
 
     public void setUnused(boolean unused) {
         isUnused = unused;
-    }
-
-    /**
-     * @return {@code Course} that this {@code GradeGroup} belongs to
-     * @see Course
-     */
-    public Course getMyCourse() {
-        return myCourse;
     }
 
     /**
