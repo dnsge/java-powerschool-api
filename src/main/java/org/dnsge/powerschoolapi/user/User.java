@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2018 Daniel Sage
+ * Copyright (c) 2019 Daniel Sage
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -66,7 +66,7 @@ public class User {
         Node usernameContainer = doc.getElementById("userName").child(0).childNode(0);
         personName = usernameContainer.toString().trim();
 
-        // Scan and find the content on user homepage, create courses from it
+        // Scan and find the content on user homepage, createWithData courses from it
         Element quickLookupDoc = doc.getElementById("quickLookup");
         Element mainContentContainer = quickLookupDoc.child(0).child(0); // <tbody> element
         Element rowSpecification = mainContentContainer.child(1);

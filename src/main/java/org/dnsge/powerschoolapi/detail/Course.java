@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2018 Daniel Sage
+ * Copyright (c) 2019 Daniel Sage
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -60,7 +60,7 @@ public class Course {
     private String teacherEmail;
     private String room;
     private final User user;
-    private final ArrayList<GradeGroup> courseGrades;
+    private final List<GradeGroup> courseGrades;
 
     /**
      * Basic constructor for a Course
@@ -71,11 +71,11 @@ public class Course {
      * @param teacherLastName Teacher's last name
      * @param teacherEmail Teacher's email
      * @param room Course's room number
-     * @param courseGrades ArrayList of course's grades
+     * @param courseGrades List of course's grades
      * @param user User which the Course belongs to
      */
     public Course(String courseName, String courseFrequency, String teacherFirstName, String teacherLastName,
-                  String teacherEmail, String room, ArrayList<GradeGroup> courseGrades, User user) {
+                  String teacherEmail, String room, List<GradeGroup> courseGrades, User user) {
         this.courseName = courseName;
         this.courseFrequency = courseFrequency;
         this.teacherFirstName = teacherFirstName;
@@ -89,10 +89,10 @@ public class Course {
     /**
      * Constructor for a Course with incomplete information
      *
-     * @param courseGrades ArrayList of grades
+     * @param courseGrades List of grades
      * @param user User which the Course belongs to
      */
-    public Course(ArrayList<GradeGroup> courseGrades, User user) {
+    public Course(List<GradeGroup> courseGrades, User user) {
         this.courseGrades = courseGrades;
         this.user = user;
     }
@@ -151,7 +151,7 @@ public class Course {
             }
             // If there is no grade yet
             if (gradeElement.childNode(0).toString().equals("[ i ]")) {
-                courseGrades.add(GradeGroup.emptyGrade(returnCourse, gradeElementPair.getR()));
+                courseGrades.add(GradeGroup.noGrade(returnCourse, gradeElementPair.getR()));
             } else {
                 String letterGrade = gradeElement.childNode(0).toString();
                 float numberGrade = Float.parseFloat(gradeElement.childNode(2).toString());

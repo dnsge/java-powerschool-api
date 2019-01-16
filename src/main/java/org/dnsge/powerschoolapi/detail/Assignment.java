@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2018 Daniel Sage
+ * Copyright (c) 2019 Daniel Sage
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -195,7 +195,7 @@ public class Assignment {
      */
     static Assignment generateFromJsonObject(JSONObject assignmentJSON) {
         try {
-            // Read the JSONObject and create a new Assignment object from it
+            // Read the JSONObject and createWithData a new Assignment object from it
             Integer assignmentId = getIntOrNull(assignmentJSON, "assignmentid");
 
             JSONObject assignmentSections = assignmentJSON.getJSONArray("_assignmentsections").getJSONObject(0);

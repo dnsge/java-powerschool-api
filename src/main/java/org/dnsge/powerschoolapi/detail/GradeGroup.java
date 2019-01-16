@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2018 Daniel Sage
+ * Copyright (c) 2019 Daniel Sage
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -48,6 +48,7 @@ public class GradeGroup {
     private final String gradingPeriodName;
     private final String hrefAttrib;
     private boolean isEmpty;
+    private boolean isUnused;
 
     private static final Pattern urlMatcherPattern =
             Pattern.compile("guardian/scores\\.html\\?frn=(\\d+)&begdate=(\\d{2})/(\\d{2})/(\\d{4})&enddate=(\\d{2})/(\\d{2})/(\\d{4})&fg=([^&]+)&schoolid=(\\d+)", Pattern.CASE_INSENSITIVE | Pattern.MULTILINE);
@@ -70,6 +71,9 @@ public class GradeGroup {
 
         this.gradingPeriod = GradingPeriod.fromColumnMode(gradingPeriod);
         this.gradingPeriodName = this.gradingPeriod.toString();
+
+        this.isEmpty = false;
+        this.isUnused = false;
 
     }
 
@@ -124,10 +128,18 @@ public class GradeGroup {
      * @param gradingPeriod Period of Grading (Whole year, quarter 1, ect)
      * @return new GradeGroup object with the desired attributes
      */
-    public static GradeGroup emptyGrade(Course myCourse, ColumnMode gradingPeriod) {
-        // An empty GradeGroup bound to a course and grading period
+    public static GradeGroup noGrade(Course myCourse, ColumnMode gradingPeriod) {
+        // An empty GradeGroup ( [ i ] ) bound to a course and grading period
         GradeGroup temp = new GradeGroup(myCourse, "", 0f, gradingPeriod, null);
         temp.setEmpty(true);
+        return temp;
+    }
+
+    public static GradeGroup emptyGrade(Course myCourse, ColumnMode gradingPeriod) {
+        // An empty GradeGroup ( not even a [ i ] ) bound to a course and grading period
+        GradeGroup temp = new GradeGroup(myCourse, "", 0f, gradingPeriod, null);
+        temp.setEmpty(true);
+        temp.setUnused(true);
         return temp;
     }
 
@@ -151,6 +163,10 @@ public class GradeGroup {
      */
     public void setEmpty(boolean empty) {
         isEmpty = empty;
+    }
+
+    public void setUnused(boolean unused) {
+        isUnused = unused;
     }
 
     /**
@@ -196,4 +212,9 @@ public class GradeGroup {
     public String getHrefAttrib() {
         return hrefAttrib;
     }
+
+    public boolean isUnused() {
+        return isUnused;
+    }
+
 }
