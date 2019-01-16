@@ -1,0 +1,5 @@
+org.dnsge.powerschoolapi.client
+org.dnsge.powerschoolapi.detail
+org.dnsge.powerschoolapi.stat
+org.dnsge.powerschoolapi.user
+org.dnsge.powerschoolapi.util
