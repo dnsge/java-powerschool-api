@@ -43,7 +43,6 @@ public class UserConfig {
     final String username;
     private final Document constructionDocument;
     final Map<String, String> authData;
-    User user;
 
     /**
      * Basic Constructor for a new UserConfig
@@ -60,22 +59,6 @@ public class UserConfig {
         // this.password = password;
         this.constructionDocument = constructionDocument;
         this.authData = authData;
-    }
-
-    /**
-     * @param user {@code User} that will own this {@code UserConfig}
-     * @see User
-     */
-    public void setUser(User user) {
-        this.user = user;
-    }
-
-    /**
-     * @return {@code User} that owns this {@code UserConfig}
-     * @see User
-     */
-    public User getUser() {
-        return user;
     }
 
     /**

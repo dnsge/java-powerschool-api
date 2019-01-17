@@ -60,7 +60,6 @@ public class User {
     public User(UserConfig config) {
         this.config = config;
         this.username = config.username;
-        config.setUser(this);
         this.courses = new ArrayList<>();
 
         Document doc = this.config.getConstructionDocument();
