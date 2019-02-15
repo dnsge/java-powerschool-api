@@ -39,6 +39,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -46,10 +48,11 @@ import java.util.regex.Pattern;
  * Object that represents a Course in Powerschool
  *
  * @author Daniel Sage
- * @version 1.0
+ * @version 1.0.2
  */
 public class Course {
 
+    private static final Logger LOGGER = Logger.getLogger(Course.class.getName());
     private static final Pattern teacherNamePattern =
             Pattern.compile("^Details about (.*?), (.*?)$", Pattern.MULTILINE | Pattern.CASE_INSENSITIVE);
 
@@ -125,7 +128,7 @@ public class Course {
             allElements.put(viewSpecification.getAt(columnCounter), courseDetailElement);
             columnCounter++;
         }
-
+        LOGGER.finest("Populating basic Course information");
         // Populate information from the 'Course' header
         Element courseDescriptorElement = allElements.get(ColumnMode.COURSE);
         courseName = courseDescriptorElement.childNode(0).toString().replace("&nbsp;", "");
@@ -141,6 +144,7 @@ public class Course {
         teacherLastName = teacherMatcher.group(1);
         teacherFirstName = teacherMatcher.group(2);
 
+        LOGGER.finest("Parsing Course grades");
         ArrayList<Pair<Element, ColumnMode>> gradingElements = ColumnMode.allGradingElements(allElements);
         for (Pair<Element, ColumnMode> gradeElementPair : gradingElements) {
             Element gradeElement;
@@ -204,9 +208,11 @@ public class Course {
 
         // JSON post data with start, end dates and section ids
         // todo: save the assignment data
+        LOGGER.finest("Generating URL for Assignment data fetching from GradingPeriod");
         JSONObject postData = gradeGroup.getJsonPostForAssignments();
 
         try {
+            LOGGER.fine("Performing HTTP request for Assignment JSON");
             Connection.Response assignmentResponse = Jsoup.connect(user.getClient().urlify("ws/xte/assignment/lookup"))
                     .timeout(2000)
                     .method(Connection.Method.POST)
@@ -218,6 +224,7 @@ public class Course {
 
             ArrayList<Assignment> rList = new ArrayList<>();
             // Populate the return list with new Assignments
+            LOGGER.finest("Populating Assignment list from retrieved JSON data");
             (new JSONArray(assignmentResponse.body())).forEach(
                     jsonObject -> rList.add(Assignment.generateFromJsonObject((JSONObject) jsonObject))
             );
@@ -226,10 +233,9 @@ public class Course {
 
 
         } catch (HttpStatusException e) {
-            System.out.println("Error fetching assignments");
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "There was a problem fetching assignments", e);
         } catch (IOException e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "There was a problem performing an HTTP request", e);
         }
 
         return null;

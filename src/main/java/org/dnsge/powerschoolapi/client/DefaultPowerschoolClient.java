@@ -33,15 +33,18 @@ import org.jsoup.nodes.Document;
 
 import java.io.IOException;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Client to interface with a Powerschool Student Portal
  *
  * @author Daniel Sage
- * @version 1.0
+ * @version 1.0.2
  */
 public final class DefaultPowerschoolClient implements PowerschoolClient {
 
+    private static final Logger LOGGER = Logger.getLogger(DefaultPowerschoolClient.class.getName());
     private final String psInstallURL;
     private ClientStorage storage;
 
@@ -91,13 +94,13 @@ public final class DefaultPowerschoolClient implements PowerschoolClient {
         // Authenticate a user
         // Get login page for the contextData and pstoken
         Document loginPage = Jsoup.connect(urlify("public/home.html")).timeout(2000).get();
-
+        LOGGER.fine("Performing cryptographic functions...");
         // Do hashing and other auth
         String contextData = loginPage.select("[name=contextData]").first().val();
         String pstoken = loginPage.select("[name=pstoken]").first().val();
         String dbpwField = PowerschoolAuth.getDBPWField(contextData, password);
         String pwField = PowerschoolAuth.getPWField(contextData, password);
-
+        LOGGER.fine("Performing login HTTP POST request");
         // Send login post request
         Response loginPostResp = Jsoup.connect(urlify("guardian/home.html"))
                 .timeout(2000)
@@ -119,7 +122,7 @@ public final class DefaultPowerschoolClient implements PowerschoolClient {
         }
 
         Map<String, String> mapCookies = loginPostResp.cookies();
-
+        LOGGER.fine("Requesting PowerSchool homepage");
         // Get homepage info
         Document gradesPage = Jsoup.connect(urlify("guardian/home.html"))
                 .timeout(2000)
@@ -142,7 +145,7 @@ public final class DefaultPowerschoolClient implements PowerschoolClient {
                     .cookies(user.getAuth())
                     .get();
         } catch (IOException e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "There was a problem performing an HTTP request", e);
             return null;
         }
     }

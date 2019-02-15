@@ -31,14 +31,18 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
 import java.util.Formatter;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Class that holds authentication / cryptographic methods for logging into Powerschool
  *
  * @author Daniel Sage
- * @version 1.0
+ * @version 1.0.2
  */
 final class PowerschoolAuth {
+
+    private static final Logger LOGGER = Logger.getLogger(PowerschoolAuth.class.getName());
 
     /**
      * Returns a hex String from a byte[]
@@ -71,7 +75,7 @@ final class PowerschoolAuth {
 
             return toHexString(hmac.doFinal(data.getBytes()));
         } catch (NoSuchAlgorithmException | InvalidKeyException e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "Fatal Error while performing HMAC", e);
             return null;
         }
     }
@@ -103,7 +107,7 @@ final class PowerschoolAuth {
             return hmacMD5(b64Pw, contextData);
 
         } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "Fatal Error while performing MD5", e);
             return null;
         }
     }

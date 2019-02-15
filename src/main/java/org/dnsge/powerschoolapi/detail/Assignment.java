@@ -32,6 +32,8 @@ import org.json.JSONObject;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Object that represents an Assignment in Powerschool
@@ -39,9 +41,11 @@ import java.util.Date;
  * Exposes many fields with information about the assignment
  *
  * @author Daniel Sage
- * @version 1.0
+ * @version 1.0.2
  */
 public class Assignment {
+
+    private static final Logger LOGGER = Logger.getLogger(Assignment.class.getName());
 
     private final String name;
     private final Integer assignmentId;
@@ -61,16 +65,16 @@ public class Assignment {
     /**
      * Basic constructor for an Assignment
      *
-     * @param name Assignment Name
-     * @param assignmentId Assignment ID
-     * @param totalPoints Total points possible
-     * @param scoredPoints Scored points
-     * @param scorePercent Percentage grade
-     * @param scoreLetterGrade Letter Grade
-     * @param dueDateString Due date String
+     * @param name                 Assignment Name
+     * @param assignmentId         Assignment ID
+     * @param totalPoints          Total points possible
+     * @param scoredPoints         Scored points
+     * @param scorePercent         Percentage grade
+     * @param scoreLetterGrade     Letter Grade
+     * @param dueDateString        Due date String
      * @param scoreEntryDateString entry date String
-     * @param flagContainer {@code AssignmentFlagContainer} object holding the status flags
-     * @param isMissingDetails Whether the assignment is not fully generated/populated
+     * @param flagContainer        {@code AssignmentFlagContainer} object holding the status flags
+     * @param isMissingDetails     Whether the assignment is not fully generated/populated
      */
     private Assignment(String name, Integer assignmentId, Integer totalPoints, Integer scoredPoints, Float scorePercent,
                        String scoreLetterGrade, String category, String dueDateString, String scoreEntryDateString,
@@ -115,9 +119,9 @@ public class Assignment {
     /**
      * Constructor for a semi-completed Assignment
      *
-     * @param name Assignment name
-     * @param assignmentId Assignment ID
-     * @param totalPoints Total points possible
+     * @param name          Assignment name
+     * @param assignmentId  Assignment ID
+     * @param totalPoints   Total points possible
      * @param dueDateString Due date as String
      */
     private Assignment(String name, Integer assignmentId, Integer totalPoints, String dueDateString, String category) {
@@ -128,7 +132,7 @@ public class Assignment {
     /**
      * Gets an integer from a JSONObject if it exists, else returns null
      *
-     * @param jo JSONObject to get int from
+     * @param jo  JSONObject to get int from
      * @param key Key to get
      * @return Integer found or null
      */
@@ -143,7 +147,7 @@ public class Assignment {
     /**
      * Gets an float from a JSONObject if it exists, else returns null
      *
-     * @param jo JSONObject to get float from
+     * @param jo  JSONObject to get float from
      * @param key Key to get
      * @return Float found or null
      */
@@ -158,7 +162,7 @@ public class Assignment {
     /**
      * Gets an String from a JSONObject if it exists, else returns null
      *
-     * @param jo JSONObject to get String from
+     * @param jo  JSONObject to get String from
      * @param key Key to get
      * @return String found or null
      */
@@ -173,7 +177,7 @@ public class Assignment {
     /**
      * Gets an Boolean from a JSONObject if it exists, else returns null
      *
-     * @param jo JSONObject to get Boolean from
+     * @param jo  JSONObject to get Boolean from
      * @param key Key to get
      * @return Boolean found or null
      */
@@ -195,6 +199,7 @@ public class Assignment {
      * @see Course
      */
     static Assignment generateFromJsonObject(JSONObject assignmentJSON) {
+        LOGGER.fine("Beginning parse of JSON for Assignment details");
         try {
             // Read the JSONObject and createWithData a new Assignment object from it
             Integer assignmentId = getIntOrNull(assignmentJSON, "assignmentid");
@@ -203,8 +208,8 @@ public class Assignment {
             JSONArray assignmentScoresArray = assignmentSections.getJSONArray("_assignmentscores");
             JSONArray assignmentCategoryAssociations = assignmentSections.getJSONArray("_assignmentcategoryassociations");
 
-            String name = getStringOrNull(assignmentSections,"name");
-            String dueDate = getStringOrNull(assignmentSections,"duedate");
+            String name = getStringOrNull(assignmentSections, "name");
+            String dueDate = getStringOrNull(assignmentSections, "duedate");
             Integer totalPoints = getIntOrNull(assignmentSections, "totalpointvalue");
 
             String category;
@@ -219,8 +224,8 @@ public class Assignment {
                 JSONObject assignmentScores = assignmentScoresArray.getJSONObject(0);
 
                 Integer scoredPoints = getIntOrNull(assignmentScores, "scorepoints");// assignmentScores.getInt("scorepoints", null);
-                Float scorePercent = getFloatOrNull(assignmentScores,"scorepercent");
-                String scoreLetterGrade = getStringOrNull(assignmentScores,"scorelettergrade");
+                Float scorePercent = getFloatOrNull(assignmentScores, "scorepercent");
+                String scoreLetterGrade = getStringOrNull(assignmentScores, "scorelettergrade");
                 String scoreEntryDate = getStringOrNull(assignmentScores, "scoreentrydate");
 
                 Boolean isCollected = getBooleanOrNull(assignmentScores, "iscollected");
@@ -240,7 +245,7 @@ public class Assignment {
             }
 
         } catch (JSONException e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "There was a problem parsing JSON returned by the server.", e);
             return null;
         }
     }
@@ -387,4 +392,5 @@ public class Assignment {
     public AssignmentFlagContainer getFlagContainer() {
         return flagContainer;
     }
+
 }
