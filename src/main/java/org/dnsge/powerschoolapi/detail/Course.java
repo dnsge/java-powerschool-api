@@ -39,6 +39,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
@@ -241,12 +242,35 @@ public class Course {
         return null;
     }
 
+    public String courseIdentifier() {
+        return Integer.toHexString(Objects.hash(getCourseFrequency(), getCourseName(), getRoom(), getTeacherEmail()));
+    }
+
     /**
      * @return A {@code String} formatted like {@code "{Course Name} - {Teacher Last Name} ({Course Grades toString()})"}
      */
     @Override
     public String toString() {
-        return courseName + " - " + teacherLastName + " (" + courseGrades.toString() + ")";
+        return String.format("%s (%s)", courseName, courseIdentifier());
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Course course = (Course) o;
+        return Objects.equals(getCourseName(), course.getCourseName()) &&
+                Objects.equals(getCourseFrequency(), course.getCourseFrequency()) &&
+                Objects.equals(getTeacherFirstName(), course.getTeacherFirstName()) &&
+                Objects.equals(getTeacherLastName(), course.getTeacherLastName()) &&
+                Objects.equals(getTeacherEmail(), course.getTeacherEmail()) &&
+                Objects.equals(getRoom(), course.getRoom()) &&
+                getCourseGrades().equals(course.getCourseGrades());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getCourseName(), getCourseFrequency(), getTeacherFirstName(), getTeacherLastName(), getTeacherEmail(), getRoom(), getCourseGrades());
     }
 
     /**
