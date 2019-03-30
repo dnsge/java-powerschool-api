@@ -35,7 +35,6 @@ import java.io.IOException;
 public interface PowerschoolClient {
 
 
-
     /**
      * Generates a complete URL from the base install url
      *
@@ -52,15 +51,24 @@ public interface PowerschoolClient {
      * @param username Username to login with
      * @param password Password to login with
      * @return {@code User} object
-     * @throws IOException if something goes wrong
+     * @throws IOException               if something goes wrong
      * @throws PowerschoolLoginException if invalid username/password
      */
     User authenticate(String username, String password) throws IOException;
 
     /**
+     * Refreshes the information of a User
+     *
+     * @param user User to update
+     * @throws IOException               if something goes wrong
+     * @throws PowerschoolLoginException if invalid username/password
+     */
+    void refreshUser(User user) throws IOException;
+
+    /**
      * Preforms a GET request with the authentication cookies of a {@code User} object
      *
-     * @param user User object to utilize
+     * @param user   User object to utilize
      * @param getUrl Non-URLified url to get
      * @return {@code Document} object from GET request
      * @see Document

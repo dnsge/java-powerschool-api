@@ -34,13 +34,13 @@ import java.util.Map;
  * Class that represents a User's configuration
  *
  * @author Daniel Sage
- * @version 1.0
+ * @version 1.0.3
  * @see User
  */
 public class UserConfig {
 
     final PowerschoolClient client;
-    final String username;
+    final String username, password;
     private final Document constructionDocument;
     final Map<String, String> authData;
 
@@ -56,7 +56,7 @@ public class UserConfig {
     public UserConfig(PowerschoolClient client, String username, String password, Document constructionDocument, Map<String, String> authData) {
         this.client = client;
         this.username = username;
-        // this.password = password;
+        this.password = password;
         this.constructionDocument = constructionDocument;
         this.authData = authData;
     }
@@ -69,9 +69,16 @@ public class UserConfig {
     }
 
     /**
+     * @return {@code UserConfig} stored password
+     */
+    public String getPassword() {
+        return password;
+    }
+
+    /**
      * @return Authentication Cookies for this {@code UserConfig}
      */
-    public Map<String, String> getAuthData() {
+    public Map<String, String> getAuthCookies() {
         return authData;
     }
 

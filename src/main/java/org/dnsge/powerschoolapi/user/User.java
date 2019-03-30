@@ -42,14 +42,14 @@ import java.util.Map;
  * Class that represents a logged in Powerschool user
  *
  * @author Daniel Sage
- * @version 1.0
+ * @version 1.0.3
  */
 public class User {
 
-    private final ArrayList<Course> courses;
-    private final String personName;
-    final UserConfig config;
-    final String username;
+    private ArrayList<Course> courses;
+    private String personName;
+    private UserConfig config;
+    private String username;
 
     /**
      * Constructor for a User based off of a {@code UserConfig} object
@@ -62,10 +62,30 @@ public class User {
         this.username = config.username;
         this.courses = new ArrayList<>();
 
-        Document doc = this.config.getConstructionDocument();
+        loadInfoFromDoc(this.config.getConstructionDocument());
+    }
 
+    /**
+     * Update fields based off of a config
+     *
+     * @param config UserConfig to update from
+     */
+    public void update(UserConfig config) {
+        this.config = config;
+        this.username = config.username;
+        this.courses = new ArrayList<>();
+
+        loadInfoFromDoc(this.config.getConstructionDocument());
+    }
+
+    /**
+     * Load information from a {@code Document}
+     *
+     * @param doc {@code Document} to load from
+     */
+    private void loadInfoFromDoc(Document doc) {
         Node usernameContainer = doc.getElementById("userName").child(0).childNode(0);
-        personName = usernameContainer.toString().trim();
+        this.personName = usernameContainer.toString().trim();
 
         // Scan and find the content on user homepage, createWithData courses from it
         Element quickLookupDoc = doc.getElementById("quickLookup");

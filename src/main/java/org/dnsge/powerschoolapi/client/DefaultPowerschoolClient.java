@@ -40,20 +40,36 @@ import java.util.logging.Logger;
  * Client to interface with a Powerschool Student Portal
  *
  * @author Daniel Sage
- * @version 1.0.2
+ * @version 1.0.3
  */
 public final class DefaultPowerschoolClient implements PowerschoolClient {
 
     private static final Logger LOGGER = Logger.getLogger(DefaultPowerschoolClient.class.getName());
+    /** Version string to be used in the default UserAgent */
+    private static final String VERSION = "1.0.3";
+
     private final String psInstallURL;
+    private final String userAgent;
     private ClientStorage storage;
 
     /**
-     * Constructor for new PowerschoolClient
+     * Constructor for new PowerschoolClient with a default UserAgent in the format of
+     * "powerschoolapi/{version identifier}"
      *
      * @param psInstallURL Install URL of the Powerschool server
      */
     public DefaultPowerschoolClient(String psInstallURL) {
+        this(psInstallURL, "powerschoolapi/" + VERSION);
+    }
+
+    /**
+     * Constructor for new PowerschoolClient with a UserAgent
+     *
+     * @param psInstallURL Install URL of the Powerschool server
+     * @param userAgent UserAgent to use in requests
+     */
+    public DefaultPowerschoolClient(String psInstallURL, String userAgent) {
+        this.userAgent = userAgent;
         this.psInstallURL = fixUrl(psInstallURL);
         this.storage = new ClientStorage();
     }
@@ -88,12 +104,21 @@ public final class DefaultPowerschoolClient implements PowerschoolClient {
     }
 
     /**
-     * {@inheritDoc}
+     * Perform a POST reqeust to log in
+     *
+     * @param username Username
+     * @param password Password
+     * @return {@code Response} object
+     * @throws IOException if something goes wrong
      */
-    public User authenticate(String username, String password) throws IOException {
+    private Response performLoginPost(String username, String password) throws IOException {
         // Authenticate a user
         // Get login page for the contextData and pstoken
-        Document loginPage = Jsoup.connect(urlify("public/home.html")).timeout(2000).get();
+        Document loginPage = Jsoup.connect(urlify("public/home.html"))
+                .userAgent(userAgent)
+                .timeout(2000)
+                .get();
+
         LOGGER.fine("Performing cryptographic functions...");
         // Do hashing and other auth
         String contextData = loginPage.select("[name=contextData]").first().val();
@@ -102,7 +127,8 @@ public final class DefaultPowerschoolClient implements PowerschoolClient {
         String pwField = PowerschoolAuth.getPWField(contextData, password);
         LOGGER.fine("Performing login HTTP POST request");
         // Send login post request
-        Response loginPostResp = Jsoup.connect(urlify("guardian/home.html"))
+
+        return Jsoup.connect(urlify("guardian/home.html"))
                 .timeout(2000)
                 .method(Method.POST)
                 .data("pstoken", pstoken)
@@ -114,7 +140,15 @@ public final class DefaultPowerschoolClient implements PowerschoolClient {
                 .data("account", username)
                 .data("pw", pwField)
                 .data("ldappassword", password)
+                .userAgent(userAgent)
                 .execute();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public User authenticate(String username, String password) throws IOException {
+        Response loginPostResp = performLoginPost(username, password);
 
         // Make sure we logged in successfully
         if (!loginPostResp.body().contains("Grades and Attendance")) {
@@ -127,6 +161,7 @@ public final class DefaultPowerschoolClient implements PowerschoolClient {
         Document gradesPage = Jsoup.connect(urlify("guardian/home.html"))
                 .timeout(2000)
                 .cookies(mapCookies)
+                .userAgent(userAgent)
                 .get();
 
         UserConfig config = new UserConfig(this, username, password, gradesPage, mapCookies);
@@ -138,14 +173,55 @@ public final class DefaultPowerschoolClient implements PowerschoolClient {
     /**
      * {@inheritDoc}
      */
+    @Override
+    public void refreshUser(User user) throws IOException {
+        String username = user.getConfig().getUsername();
+        String password = user.getConfig().getPassword();
+        Map<String, String> oldCookies = user.getConfig().getAuthCookies();
+
+        // Try to access the page using the already used cookies
+        Document gradesPage = Jsoup.connect(urlify("guardian/home.html"))
+                .timeout(2000)
+                .cookies(oldCookies)
+                .userAgent(userAgent)
+                .get();
+
+        // The cookies were invalid, login again
+        if (!gradesPage.body().html().contains("Grades and Attendance")) {
+            Response loginPostResp = performLoginPost(username, password);
+
+            if (!loginPostResp.body().contains("Grades and Attendance")) {
+                throw new PowerschoolLoginException("Invalid login information");
+            }
+
+            Map<String, String> mapCookies = loginPostResp.cookies();
+            gradesPage = Jsoup.connect(urlify("guardian/home.html"))
+                    .timeout(2000)
+                    .cookies(mapCookies)
+                    .userAgent(userAgent)
+                    .get();
+
+            // Update
+            user.update(new UserConfig(this, username, password, gradesPage, mapCookies));
+            return;
+        }
+
+        // Otherwise, we can update with the new page
+        user.update(new UserConfig(this, username, password, gradesPage, oldCookies));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public Document getAs(User user, String getUrl) {
         // Get a url as a user
         try {
             return Jsoup.connect(urlify(getUrl))
                     .cookies(user.getAuth())
+                    .userAgent(userAgent)
                     .get();
         } catch (IOException e) {
-            LOGGER.log(Level.SEVERE, "There was a problem performing an HTTP request", e);
+            LOGGER.log(Level.SEVERE, "There was a problem performing an HTTP GET request", e);
             return null;
         }
     }
