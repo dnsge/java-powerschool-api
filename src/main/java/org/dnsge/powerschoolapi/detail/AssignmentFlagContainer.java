@@ -24,11 +24,13 @@
 
 package org.dnsge.powerschoolapi.detail;
 
+import java.util.Objects;
+
 /**
  * Class that holds information about an {@code Assignment's} flags
  *
  * @author Daniel Sage
- * @version 1.0
+ * @version 1.0.3
  * @see Assignment
  */
 public class AssignmentFlagContainer {
@@ -66,6 +68,24 @@ public class AssignmentFlagContainer {
      */
     public static AssignmentFlagContainer empty() {
         return new AssignmentFlagContainer(null, null, null, null, null, null);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        AssignmentFlagContainer that = (AssignmentFlagContainer) o;
+        return Objects.equals(isCollected, that.isCollected) &&
+                Objects.equals(isLate, that.isLate) &&
+                Objects.equals(isMissing, that.isMissing) &&
+                Objects.equals(isExempt, that.isExempt) &&
+                Objects.equals(isAbsent, that.isAbsent) &&
+                Objects.equals(isIncomplete, that.isIncomplete);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(isCollected, isLate, isMissing, isExempt, isAbsent, isIncomplete);
     }
 
     /**

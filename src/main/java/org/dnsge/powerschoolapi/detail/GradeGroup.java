@@ -30,6 +30,7 @@ import org.json.JSONObject;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -38,7 +39,7 @@ import java.util.regex.Pattern;
  * Class that represents a group of grades
  *
  * @author Daniel Sage
- * @version 1.0
+ * @version 1.0.3
  */
 public class GradeGroup {
 
@@ -162,6 +163,24 @@ public class GradeGroup {
             return letterGrade + " (" + numberGrade + ")" + " in " + gradingPeriodName;
         else
             return "Empty grade in " + gradingPeriodName;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        GradeGroup that = (GradeGroup) o;
+        return Float.compare(that.getNumberGrade(), getNumberGrade()) == 0 &&
+                isEmpty() == that.isEmpty() &&
+                isUnused() == that.isUnused() &&
+                getLetterGrade().equals(that.getLetterGrade()) &&
+                getGradingPeriod() == that.getGradingPeriod() &&
+                getGradingPeriodName().equals(that.getGradingPeriodName());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getLetterGrade(), getNumberGrade(), getGradingPeriod(), getGradingPeriodName(), isEmpty(), isUnused());
     }
 
     /**

@@ -26,12 +26,14 @@ package org.dnsge.powerschoolapi.stat;
 
 import org.dnsge.powerschoolapi.detail.Course;
 
+import java.util.Objects;
+
 /**
  * Extension of a {@link Course} with credit hours and grade values.
  * Can be instantiated with {@link #createWithData(Course, double, double)}
  *
  * @author Daniel Sage
- * @version 1.0
+ * @version 1.0.3
  */
 public class DetailedCourse extends Course {
 
@@ -62,6 +64,21 @@ public class DetailedCourse extends Course {
         d.gradeValue = gradeValue;
 
         return d;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        DetailedCourse that = (DetailedCourse) o;
+        return Double.compare(that.getCreditHours(), getCreditHours()) == 0 &&
+                Double.compare(that.getGradeValue(), getGradeValue()) == 0;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), getCreditHours(), getGradeValue());
     }
 
     /**

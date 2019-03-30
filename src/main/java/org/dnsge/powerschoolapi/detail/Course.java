@@ -49,7 +49,7 @@ import java.util.regex.Pattern;
  * Object that represents a Course in Powerschool
  *
  * @author Daniel Sage
- * @version 1.0.2
+ * @version 1.0.3
  */
 public class Course {
 
@@ -246,12 +246,16 @@ public class Course {
         return Integer.toHexString(Objects.hash(getCourseFrequency(), getCourseName(), getRoom(), getTeacherEmail()));
     }
 
+    public String objectIdentifier() {
+        return Integer.toHexString(hashCode());
+    }
+
     /**
      * @return A {@code String} formatted like {@code "{Course Name} - {Teacher Last Name} ({Course Grades toString()})"}
      */
     @Override
     public String toString() {
-        return String.format("%s (%s)", courseName, courseIdentifier());
+        return String.format("%s (%s.%s)", courseName, courseIdentifier(), objectIdentifier());
     }
 
     @Override

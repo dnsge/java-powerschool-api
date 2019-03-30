@@ -32,6 +32,7 @@ import org.json.JSONObject;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -41,7 +42,7 @@ import java.util.logging.Logger;
  * Exposes many fields with information about the assignment
  *
  * @author Daniel Sage
- * @version 1.0.2
+ * @version 1.0.3
  */
 public class Assignment {
 
@@ -76,7 +77,7 @@ public class Assignment {
      * @param flagContainer        {@code AssignmentFlagContainer} object holding the status flags
      * @param isMissingDetails     Whether the assignment is not fully generated/populated
      */
-    private Assignment(String name, Integer assignmentId, Integer totalPoints, Integer scoredPoints, Float scorePercent,
+    public Assignment(String name, Integer assignmentId, Integer totalPoints, Integer scoredPoints, Float scorePercent,
                        String scoreLetterGrade, String category, String dueDateString, String scoreEntryDateString,
                        AssignmentFlagContainer flagContainer, boolean isMissingDetails) {
         Date dueDate1;
@@ -124,7 +125,7 @@ public class Assignment {
      * @param totalPoints   Total points possible
      * @param dueDateString Due date as String
      */
-    private Assignment(String name, Integer assignmentId, Integer totalPoints, String dueDateString, String category) {
+    public Assignment(String name, Integer assignmentId, Integer totalPoints, String dueDateString, String category) {
         this(name, assignmentId, totalPoints, null, null, null, category,
                 dueDateString, null, AssignmentFlagContainer.empty(), true);
     }
@@ -198,7 +199,7 @@ public class Assignment {
      * @see DefaultPowerschoolClient
      * @see Course
      */
-    static Assignment generateFromJsonObject(JSONObject assignmentJSON) {
+    public static Assignment generateFromJsonObject(JSONObject assignmentJSON) {
         LOGGER.fine("Beginning parse of JSON for Assignment details");
         try {
             // Read the JSONObject and createWithData a new Assignment object from it
@@ -256,6 +257,29 @@ public class Assignment {
     @Override
     public String toString() {
         return name + " (" + scorePercent + ")";
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Assignment that = (Assignment) o;
+        return isMissingDetails() == that.isMissingDetails() &&
+                getName().equals(that.getName()) &&
+                getAssignmentId().equals(that.getAssignmentId()) &&
+                getTotalPoints().equals(that.getTotalPoints()) &&
+                Objects.equals(getScoredPoints(), that.getScoredPoints()) &&
+                Objects.equals(getScorePercent(), that.getScorePercent()) &&
+                getCategory().equals(that.getCategory()) &&
+                Objects.equals(getScoreLetterGrade(), that.getScoreLetterGrade()) &&
+                getDueDate().equals(that.getDueDate()) &&
+                Objects.equals(getScoreEntryDate(), that.getScoreEntryDate()) &&
+                getFlagContainer().equals(that.getFlagContainer());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getName(), getAssignmentId(), getTotalPoints(), getScoredPoints(), getScorePercent(), getCategory(), getScoreLetterGrade(), getDueDate(), getScoreEntryDate(), getFlagContainer(), isMissingDetails());
     }
 
     /**
