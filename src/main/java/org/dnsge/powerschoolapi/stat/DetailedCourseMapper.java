@@ -37,7 +37,7 @@ import java.util.stream.Collectors;
  * method.
  *
  * @author Daniel Sage
- * @version 1.0
+ * @version 1.0.4
  */
 public interface DetailedCourseMapper {
 
@@ -84,16 +84,20 @@ public interface DetailedCourseMapper {
          * A,C,E or B,D,F letter day courses (every other day) are 0.25 hours if they are for one semester, or 0.5 for
          * the whole year
          */
-        if (course.getCourseFrequency().contains("A,C,E") || course.getCourseFrequency().contains("B,D,F")) {
+        if (course.getGradeGroup(GradingPeriod.F1).isEmpty()) { // Class doesn't get a grade (i.e. homeroom or lunch)
+            creditHours = 0;
+        } else if (course.getCourseFrequency().contains("A,C,E") || course.getCourseFrequency().contains("B,D,F")) {
             if (course.getGradeGroup(GradingPeriod.E2).isUnused() || course.getGradeGroup(GradingPeriod.E1).isUnused()) {
                 creditHours = 0.25;
             } else {
                 creditHours = 0.5;
             }
-        } else if (course.getGradeGroup(GradingPeriod.F1).isEmpty()) { // Class doesn't get a grade (i.e. homeroom or lunch)
-            creditHours = 0;
         } else {
-            creditHours = 1;
+            if (name.contains("study hall")) {
+                creditHours = 0; // study hall doesn't get any hours
+            } else {
+                creditHours = 1;
+            }
         }
 
         // Get grade value from letter grade on a A+ = 4.3 scale
