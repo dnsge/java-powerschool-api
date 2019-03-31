@@ -72,14 +72,15 @@ public class Assignment {
      * @param scoredPoints         Scored points
      * @param scorePercent         Percentage grade
      * @param scoreLetterGrade     Letter Grade
+     * @param category             Assignment category
      * @param dueDateString        Due date String
      * @param scoreEntryDateString entry date String
      * @param flagContainer        {@code AssignmentFlagContainer} object holding the status flags
      * @param isMissingDetails     Whether the assignment is not fully generated/populated
      */
     public Assignment(String name, Integer assignmentId, Integer totalPoints, Integer scoredPoints, Float scorePercent,
-                       String scoreLetterGrade, String category, String dueDateString, String scoreEntryDateString,
-                       AssignmentFlagContainer flagContainer, boolean isMissingDetails) {
+                      String scoreLetterGrade, String category, String dueDateString, String scoreEntryDateString,
+                      AssignmentFlagContainer flagContainer, boolean isMissingDetails) {
         Date dueDate1;
         Date scoreEntryDate1;
         this.name = name;
@@ -124,6 +125,7 @@ public class Assignment {
      * @param assignmentId  Assignment ID
      * @param totalPoints   Total points possible
      * @param dueDateString Due date as String
+     * @param category      Assignment category
      */
     public Assignment(String name, Integer assignmentId, Integer totalPoints, String dueDateString, String category) {
         this(name, assignmentId, totalPoints, null, null, null, category,
