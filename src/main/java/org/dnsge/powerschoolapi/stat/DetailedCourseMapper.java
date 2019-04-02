@@ -93,11 +93,11 @@ public interface DetailedCourseMapper {
                 creditHours = 0.5;
             }
         } else {
-            if (name.contains("study hall")) {
-                creditHours = 0; // study hall doesn't get any hours
-            } else {
-                creditHours = 1;
-            }
+            creditHours = 1;
+        }
+
+        if (name.contains("study hall")) {
+            creditHours = 0; // study hall doesn't get any hours
         }
 
         // Get grade value from letter grade on a A+ = 4.3 scale
