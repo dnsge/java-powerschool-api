@@ -40,6 +40,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Supplier;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
@@ -129,12 +130,14 @@ public class Course {
             allElements.put(viewSpecification.getAt(columnCounter), courseDetailElement);
             columnCounter++;
         }
+
         LOGGER.finest("Populating basic Course information");
         // Populate information from the 'Course' header
         Element courseDescriptorElement = allElements.get(ColumnMode.COURSE);
-        courseName = courseDescriptorElement.childNode(0).toString().replace("&nbsp;", "");
-        String teacherDesc = courseDescriptorElement.childNode(2).attr("title");
-        teacherEmail = courseDescriptorElement.childNode(4).attr("href").substring(7);
+        courseName = safeCall(() -> courseDescriptorElement.childNode(0).toString().replace("&nbsp;", ""), "unknown_course");
+        String teacherDesc = safeCall(() -> courseDescriptorElement.childNode(2).attr("title"));
+        teacherEmail = safeCall(() -> courseDescriptorElement.childNode(4).attr("href").substring(7));
+
         try {
             room = courseDescriptorElement.childNode(5).toString().replace("&nbsp;", "").substring(5);
         } catch (IndexOutOfBoundsException ignored) {
@@ -142,8 +145,12 @@ public class Course {
 
         Matcher teacherMatcher = teacherNamePattern.matcher(teacherDesc);
         teacherMatcher.matches();
-        teacherLastName = teacherMatcher.group(1);
-        teacherFirstName = teacherMatcher.group(2);
+        try {
+            teacherLastName = teacherMatcher.group(1);
+        } catch (IllegalStateException e) { teacherLastName = ""; }
+        try {
+            teacherFirstName = teacherMatcher.group(2);
+        } catch (IllegalStateException e) { teacherFirstName = ""; }
 
         LOGGER.finest("Parsing Course grades");
         ArrayList<Pair<Element, ColumnMode>> gradingElements = ColumnMode.allGradingElements(allElements);
@@ -156,14 +163,16 @@ public class Course {
                 continue;
             }
             // If there is no grade yet
-            if (gradeElement.childNode(0).toString().equals("[ i ]")) {
-                courseGrades.add(GradeGroup.noGrade(returnCourse, gradeElementPair.getR()));
-            } else {
-                String letterGrade = gradeElement.childNode(0).toString();
-                float numberGrade = Float.parseFloat(gradeElement.childNode(2).toString());
-                courseGrades.add(new GradeGroup(returnCourse.getUser().documentFetcher(), letterGrade, numberGrade,
-                        gradeElementPair.getR(), gradeElement.attr("href")));
-            }
+            try {
+                if (gradeElement.childNode(0).toString().equals("[ i ]")) {
+                    courseGrades.add(GradeGroup.noGrade(returnCourse, gradeElementPair.getR()));
+                } else {
+                    String letterGrade = gradeElement.childNode(0).toString();
+                    float numberGrade = Float.parseFloat(gradeElement.childNode(2).toString());
+                    courseGrades.add(new GradeGroup(returnCourse.getUser().documentFetcher(), letterGrade, numberGrade,
+                            gradeElementPair.getR(), gradeElement.attr("href")));
+                }
+            } catch (Throwable ignored) { }
         }
 
         // Update the course with the data found above
@@ -333,4 +342,17 @@ public class Course {
     public User getUser() {
         return user;
     }
+
+    private static String safeCall(Supplier<String> sup, String def) {
+        try {
+            return sup.get();
+        } catch (Throwable e) {
+            return def;
+        }
+    }
+
+    private static String safeCall(Supplier<String> sup) {
+        return safeCall(sup, "");
+    }
+
 }
