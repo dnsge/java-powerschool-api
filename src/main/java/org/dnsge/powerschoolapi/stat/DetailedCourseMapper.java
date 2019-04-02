@@ -37,7 +37,7 @@ import java.util.stream.Collectors;
  * method.
  *
  * @author Daniel Sage
- * @version 1.0.4
+ * @version 1.0.5
  */
 public interface DetailedCourseMapper {
 
@@ -87,8 +87,17 @@ public interface DetailedCourseMapper {
         if (course.getGradeGroup(GradingPeriod.F1).isEmpty()) { // Class doesn't get a grade (i.e. homeroom or lunch)
             creditHours = 0;
         } else if (course.getCourseFrequency().contains("A,C,E") || course.getCourseFrequency().contains("B,D,F")) {
-            if (course.getGradeGroup(GradingPeriod.E2).isUnused() || course.getGradeGroup(GradingPeriod.E1).isUnused()) {
-                creditHours = 0.25;
+            boolean noMidterm = course.getGradeGroup(GradingPeriod.E1).isUnused();
+            boolean noFinal = course.getGradeGroup(GradingPeriod.E2).isUnused();
+            boolean hasQ1 = !course.getGradeGroup(GradingPeriod.Q1).isUnused();
+            boolean hasQ3 = !course.getGradeGroup(GradingPeriod.Q3).isUnused();
+
+            if (noMidterm || noFinal) {
+                if (hasQ1 && hasQ3) {
+                    creditHours = 0.5;
+                } else {
+                    creditHours = 0.25;
+                }
             } else {
                 creditHours = 0.5;
             }

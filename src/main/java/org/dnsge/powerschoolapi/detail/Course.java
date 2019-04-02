@@ -50,7 +50,7 @@ import java.util.regex.Pattern;
  * Object that represents a Course in Powerschool
  *
  * @author Daniel Sage
- * @version 1.0.3
+ * @version 1.0.5
  */
 public class Course {
 

@@ -39,7 +39,7 @@ import java.util.regex.Pattern;
  * Class that represents a group of grades
  *
  * @author Daniel Sage
- * @version 1.0.3
+ * @version 1.0.5
  */
 public class GradeGroup {
 
@@ -184,6 +184,7 @@ public class GradeGroup {
     }
 
     /**
+     * Has the value [ i ]
      * @return Whether this {@code GradeGroup} has no grades
      */
     public boolean isEmpty() {
@@ -237,6 +238,10 @@ public class GradeGroup {
         return hrefAttrib;
     }
 
+    /**
+     * Has the value slashed out
+     * @return Whether this grade group is unused
+     */
     public boolean isUnused() {
         return isUnused;
     }
