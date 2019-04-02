@@ -113,9 +113,6 @@ public class Course {
     public static Course generateCourseFromElement(Element genElement, User user, ViewSpecification viewSpecification) {
         String courseFrequency = genElement.child(0).html().trim();
         String courseName;
-        String teacherFirstName;
-        String teacherLastName;
-        String teacherEmail;
         String room = "";
 
         // Create the basic course with a reference to the ArrayList that will later be populated
@@ -134,26 +131,50 @@ public class Course {
         LOGGER.finest("Populating basic Course information");
         // Populate information from the 'Course' header
         Element courseDescriptorElement = allElements.get(ColumnMode.COURSE);
-        courseName = safeCall(() -> courseDescriptorElement.childNode(0).toString().replace("&nbsp;", ""), "unknown_course");
-        String teacherDesc = safeCall(() -> courseDescriptorElement.childNode(2).attr("title"));
-        teacherEmail = safeCall(() -> courseDescriptorElement.childNode(4).attr("href").substring(7));
 
-        try {
-            room = courseDescriptorElement.childNode(5).toString().replace("&nbsp;", "").substring(5);
-        } catch (IndexOutOfBoundsException ignored) {
+        courseName = safeCall(
+                () -> courseDescriptorElement.childNode(0).toString().replace("&nbsp;", ""),
+                "unknown_course");
+
+        String teacherDesc = "";
+        String teacherEmail = "";
+        String teacherFirstName;
+        String teacherLastName;
+
+        // Check over each element to find the best choice for values (default to empty string)
+        for (Element e : courseDescriptorElement.children()) {
+            if (e.tagName().equals("a") && e.hasAttr("href")) {
+                String href = e.attr("href");
+                if (href.startsWith("mailto:")) { // Teacher email button
+                    teacherEmail = safeCall(() -> href.substring(7), "");
+                } else if (href.startsWith("teacherinfo.html")) { // Teacher desc
+                    teacherDesc = safeCall(() -> e.attr("title"), "");
+                }
+            }
         }
 
-        Matcher teacherMatcher = teacherNamePattern.matcher(teacherDesc);
-        teacherMatcher.matches();
         try {
-            teacherLastName = teacherMatcher.group(1);
-        } catch (IllegalStateException e) { teacherLastName = ""; }
-        try {
-            teacherFirstName = teacherMatcher.group(2);
-        } catch (IllegalStateException e) { teacherFirstName = ""; }
+            // Get the last element and pray it's the room number
+            // Remove the prefixing "- Rm: "
+            room = courseDescriptorElement.childNode(courseDescriptorElement.children().size() - 1)
+                    .toString()
+                    .replace("&nbsp;", "").substring(5);
+        } catch (IndexOutOfBoundsException ignored) { }
+
+        if (teacherDesc.equals("")) { // we couldn't find anything earlier
+            teacherLastName = "";
+            teacherFirstName = "";
+        } else { // We found something, try to match using the regex
+            Matcher teacherMatcher = teacherNamePattern.matcher(teacherDesc);
+            teacherMatcher.matches();
+            // safely call just to be sure
+            teacherLastName = safeCall(() -> teacherMatcher.group(1), "");
+            teacherFirstName = safeCall(() -> teacherMatcher.group(2), "");
+        }
 
         LOGGER.finest("Parsing Course grades");
         ArrayList<Pair<Element, ColumnMode>> gradingElements = ColumnMode.allGradingElements(allElements);
+
         for (Pair<Element, ColumnMode> gradeElementPair : gradingElements) {
             Element gradeElement;
             try {
@@ -172,7 +193,8 @@ public class Course {
                     courseGrades.add(new GradeGroup(returnCourse.getUser().documentFetcher(), letterGrade, numberGrade,
                             gradeElementPair.getR(), gradeElement.attr("href")));
                 }
-            } catch (Throwable ignored) { }
+            } catch (Throwable ignored) {
+            }
         }
 
         // Update the course with the data found above
@@ -343,6 +365,13 @@ public class Course {
         return user;
     }
 
+    /**
+     * Safely call a method, and if it fails, return a default value
+     *
+     * @param sup String supplier method
+     * @param def Default value
+     * @return Value retrieved
+     */
     private static String safeCall(Supplier<String> sup, String def) {
         try {
             return sup.get();
@@ -351,6 +380,12 @@ public class Course {
         }
     }
 
+    /**
+     * Safely call a method, and if it fails, return an empty string
+     *
+     * @param sup String supplier method
+     * @return Value retrieved
+     */
     private static String safeCall(Supplier<String> sup) {
         return safeCall(sup, "");
     }
