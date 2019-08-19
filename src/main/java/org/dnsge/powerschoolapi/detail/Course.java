@@ -50,7 +50,7 @@ import java.util.regex.Pattern;
  * Object that represents a Course in Powerschool
  *
  * @author Daniel Sage
- * @version 1.0.5
+ * @version 1.0.6
  */
 public class Course {
 
@@ -133,7 +133,10 @@ public class Course {
         Element courseDescriptorElement = allElements.get(ColumnMode.COURSE);
 
         courseName = safeCall(
-                () -> courseDescriptorElement.childNode(0).toString().replace("&nbsp;", ""),
+                () -> courseDescriptorElement.childNode(0).toString()
+                        .replace("&nbsp;", "")
+                        .replace("&amp;", "&")
+                        .trim(),
                 "unknown_course");
 
         String teacherDesc = "";
