@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2019 Daniel Sage
+ * Copyright (c) 2020 Daniel Sage
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -25,9 +25,7 @@
 package org.dnsge.powerschoolapi.stat;
 
 import org.dnsge.powerschoolapi.detail.Course;
-import org.dnsge.powerschoolapi.detail.GradingPeriod;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 

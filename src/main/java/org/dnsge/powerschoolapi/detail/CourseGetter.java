@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2019 Daniel Sage
+ * Copyright (c) 2020 Daniel Sage
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -44,7 +44,6 @@ public class CourseGetter {
      *
      * @param courses ArrayList to search through
      */
-    @SuppressWarnings("unchecked")
     public CourseGetter(List<Course> courses) {
         this.currentCourses = List.copyOf(courses);
     }
@@ -119,7 +118,6 @@ public class CourseGetter {
     /**
      * @return New ArrayList Object with the results of the filtering
      */
-    @SuppressWarnings("unchecked")
     public List<Course> results() {
         return List.copyOf(currentCourses);
     }
