@@ -30,6 +30,7 @@ import org.jsoup.Connection.Method;
 import org.jsoup.Connection.Response;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import org.jsoup.select.Elements;
 
 import java.io.IOException;
 import java.util.Map;
@@ -40,13 +41,13 @@ import java.util.logging.Logger;
  * Client to interface with a Powerschool Student Portal
  *
  * @author Daniel Sage
- * @version 1.0.3
+ * @version 1.1.0
  */
 public final class DefaultPowerschoolClient implements PowerschoolClient {
 
     private static final Logger LOGGER = Logger.getLogger(DefaultPowerschoolClient.class.getName());
     /** Version string to be used in the default UserAgent */
-    private static final String VERSION = "1.0.3";
+    private static final String VERSION = "1.1.0";
 
     private final String psInstallURL;
     private final String userAgent;
@@ -104,7 +105,7 @@ public final class DefaultPowerschoolClient implements PowerschoolClient {
     }
 
     /**
-     * Perform a POST reqeust to log in
+     * Perform a POST request to log in
      *
      * @param username Username
      * @param password Password
@@ -113,35 +114,58 @@ public final class DefaultPowerschoolClient implements PowerschoolClient {
      */
     private Response performLoginPost(String username, String password) throws IOException {
         // Authenticate a user
-        // Get login page for the contextData and pstoken
+        // Get login page for the contextData and pstoken if used
         Document loginPage = Jsoup.connect(urlify("public/home.html"))
                 .userAgent(userAgent)
                 .timeout(2000)
                 .get();
 
-        LOGGER.fine("Performing cryptographic functions...");
+        LOGGER.fine("Performing authentication...");
         // Do hashing and other auth
-        String contextData = loginPage.select("[name=contextData]").first().val();
-        String pstoken = loginPage.select("[name=pstoken]").first().val();
-        String dbpwField = PowerschoolAuth.getDBPWField(contextData, password);
-        String pwField = PowerschoolAuth.getPWField(contextData, password);
-        LOGGER.fine("Performing login HTTP POST request");
-        // Send login post request
+        Elements contextDataE = loginPage.select("[name=contextData]");
+        Elements pstokenE = loginPage.select("[name=pstoken]");
 
-        return Jsoup.connect(urlify("guardian/home.html"))
-                .timeout(2000)
-                .method(Method.POST)
-                .data("pstoken", pstoken)
-                .data("contextData", contextData)
-                .data("dbpw", dbpwField)
-                .data("serviceName", "PS Parent Portal")
-                .data("pcasServerURL", "/")
-                .data("credentialType", "User Id and Password Credential")
-                .data("account", username)
-                .data("pw", pwField)
-                .data("ldappassword", password)
-                .userAgent(userAgent)
-                .execute();
+        if (contextDataE.isEmpty() || pstokenE.isEmpty()) {
+            // Updated authentication
+            LOGGER.fine("Performing login HTTP POST request");
+
+            return Jsoup.connect(urlify("guardian/home.html"))
+                    .timeout(2000)
+                    .method(Method.POST)
+                    .data("account", username)
+                    .data("dbpw", password)
+                    .data("pw", password)
+                    .data("ldappassword", password)
+                    .data("serviceName", "PS Parent Portal")
+                    .data("credentialType", "User Id and Password Credential")
+                    .data("pcasServerURL", "/")
+                    .userAgent(userAgent)
+                    .execute();
+        } else {
+            // Legacy authentication
+            LOGGER.fine("Using legacy authentication");
+            String contextData = contextDataE.first().val();
+            String pstoken = pstokenE.first().val();
+            String dbpwField = PowerschoolAuth.getDBPWField(contextData, password);
+            String pwField = PowerschoolAuth.getPWField(contextData, password);
+            LOGGER.fine("Performing legacy login HTTP POST request");
+            // Send login post request
+
+            return Jsoup.connect(urlify("guardian/home.html"))
+                    .timeout(2000)
+                    .method(Method.POST)
+                    .data("pstoken", pstoken)
+                    .data("contextData", contextData)
+                    .data("dbpw", dbpwField)
+                    .data("serviceName", "PS Parent Portal")
+                    .data("pcasServerURL", "/")
+                    .data("credentialType", "User Id and Password Credential")
+                    .data("account", username)
+                    .data("pw", pwField)
+                    .data("ldappassword", password)
+                    .userAgent(userAgent)
+                    .execute();
+        }
     }
 
     /**
