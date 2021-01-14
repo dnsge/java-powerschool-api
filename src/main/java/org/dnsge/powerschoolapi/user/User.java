@@ -28,6 +28,7 @@ import org.dnsge.powerschoolapi.client.DefaultPowerschoolClient;
 import org.dnsge.powerschoolapi.client.PowerschoolClient;
 import org.dnsge.powerschoolapi.detail.Course;
 import org.dnsge.powerschoolapi.detail.CourseGetter;
+import org.dnsge.powerschoolapi.util.ChildrenTree;
 import org.dnsge.powerschoolapi.util.DocumentFetcher;
 import org.dnsge.powerschoolapi.util.ViewSpecification;
 import org.jsoup.nodes.Document;
@@ -89,8 +90,15 @@ public class User {
 
         // Scan and find the content on user homepage, createWithData courses from it
         Element quickLookupDoc = doc.getElementById("quickLookup");
-        Element mainContentContainer = quickLookupDoc.child(0).child(0); // <tbody> element
-        Element rowSpecification = mainContentContainer.child(1);
+        Element mainTable = ChildrenTree.findFirstChildTag(quickLookupDoc, "table");
+        if (mainTable == null)
+            throw new RuntimeException("Could not find main table");
+
+        Element mainContentContainer = ChildrenTree.findFirstChildTag(mainTable, "tbody");
+        if (mainContentContainer == null)
+            throw new RuntimeException("Could not find main content container");
+
+        Element rowSpecification = mainContentContainer.child(0);
         ViewSpecification viewSpecification = new ViewSpecification(rowSpecification);
         for (Element child : mainContentContainer.children()) {
             if (child.hasAttr("id")) {
