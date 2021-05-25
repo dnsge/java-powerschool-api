@@ -57,15 +57,14 @@ public class Course {
     private static final Logger LOGGER = Logger.getLogger(Course.class.getName());
     private static final Pattern teacherNamePattern =
             Pattern.compile("^Details about (.*?), (.*?)$", Pattern.MULTILINE | Pattern.CASE_INSENSITIVE);
-
+    private final User user;
+    private final List<GradeGroup> courseGrades;
     private String courseName;
     private String courseFrequency;
     private String teacherFirstName;
     private String teacherLastName;
     private String teacherEmail;
     private String room;
-    private final User user;
-    private final List<GradeGroup> courseGrades;
 
     /**
      * Basic constructor for a Course
@@ -225,6 +224,36 @@ public class Course {
                 return gg;
         }
         return null;
+    }
+
+    /**
+     * Checks whether the {@code GradeGroup} object is unused or null
+     *
+     * @param gradingPeriod GradingPeriod which to get the GradeGroup from
+     * @return Whether the grade group is unused or null
+     */
+    public boolean isGradeGroupUnused(GradingPeriod gradingPeriod) {
+        GradeGroup group = getGradeGroup(gradingPeriod);
+        if (group == null) {
+            return true;
+        } else {
+            return group.isUnused();
+        }
+    }
+
+    /**
+     * Checks whether the {@code GradeGroup} object is empty or null
+     *
+     * @param gradingPeriod GradingPeriod which to get the GradeGroup from
+     * @return Whether the grade group is empty or null
+     */
+    public boolean isGradeGroupEmpty(GradingPeriod gradingPeriod) {
+        GradeGroup group = getGradeGroup(gradingPeriod);
+        if (group == null) {
+            return true;
+        } else {
+            return group.isEmpty();
+        }
     }
 
     /**

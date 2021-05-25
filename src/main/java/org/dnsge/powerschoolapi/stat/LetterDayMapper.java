@@ -73,10 +73,10 @@ public class LetterDayMapper implements DetailedCourseMapper {
         if (course.getGradeGroup(GradingPeriod.F1).isEmpty()) { // Class doesn't get a grade (i.e. homeroom or lunch)
             creditHours = 0;
         } else if (course.getCourseFrequency().contains("A,C,E") || course.getCourseFrequency().contains("B,D,F")) {
-            boolean noMidterm = course.getGradeGroup(GradingPeriod.E1).isUnused();
-            boolean noFinal = course.getGradeGroup(GradingPeriod.E2).isUnused();
-            boolean hasQ1 = !course.getGradeGroup(GradingPeriod.Q1).isUnused();
-            boolean hasQ3 = !course.getGradeGroup(GradingPeriod.Q3).isUnused();
+            boolean noMidterm = course.isGradeGroupUnused(GradingPeriod.E1);
+            boolean noFinal = course.isGradeGroupUnused(GradingPeriod.E2);
+            boolean hasQ1 = !course.isGradeGroupUnused(GradingPeriod.Q1);
+            boolean hasQ3 = !course.isGradeGroupUnused(GradingPeriod.Q3);
 
             if (noMidterm || noFinal) {
                 if (hasQ1 && hasQ3) {
